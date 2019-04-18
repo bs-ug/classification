@@ -17,3 +17,9 @@ for name in ["train", "validation", "test"]:
             os.path.join(SOURCE_FILES, f"{file_name}.story"),
             os.path.join(CNN_DATA_DIR, name, f"{file_name}.txt")
         )
+        with open(os.path.join(CNN_DATA_DIR, name, f"{file_name}.txt"), "r", encoding="UTF-8") as file:
+            news = file.read()
+        news = news.split()
+        news = news[:news.index("@highlight")]
+        with open(os.path.join(CNN_DATA_DIR, name, f"{file_name}.txt"), "w", encoding="UTF-8") as file:
+            file.write(" ".join(news))
