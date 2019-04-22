@@ -18,7 +18,7 @@ def get_word_embeddings(model, train_x, validation_x):
     word_index = token.word_index
 
     train_seq_x = sequence.pad_sequences(token.texts_to_sequences(train_x))
-    validation_seq_x = sequence.pad_sequences(token.texts_to_sequences(validation_x))
+    validation_seq_x = sequence.pad_sequences(token.texts_to_sequences(validation_x), maxlen=len(train_seq_x[0]))
 
     embedding_matrix = numpy.zeros((len(word_index) + 1, 100))
     for word, i in word_index.items():
