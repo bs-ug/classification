@@ -1,4 +1,5 @@
 import os
+import pickle
 from glob import glob
 
 from gensim.models.callbacks import CallbackAny2Vec
@@ -6,6 +7,8 @@ from keras.callbacks import Callback
 from keras.preprocessing import text
 from sklearn import metrics
 from sklearn.metrics import roc_auc_score
+
+from numpy import argmax
 
 
 class W2VCallback(CallbackAny2Vec):
@@ -32,8 +35,8 @@ class KerasCallback(Callback):
 
     def on_epoch_end(self, epoch, logs=None):
         self.losses.append(logs.get('loss'))
-        # y_pred = self.model.predict(self.validation_data[0])
-        # self.aucs.append(roc_auc_score(self.validation_data[1], y_pred))
+        y_pred = self.model.predict(self.validation_data[0])
+        self.aucs.append(roc_auc_score(self.validation_data[1], y_pred))
         return
 
 
@@ -48,12 +51,13 @@ def train_model(classifier, training_data, training_labels, validation_data, val
     callbacks = KerasCallback()
     classifier.fit(
         training_data, training_labels,
-        batch_size=128, epochs=10,
+        batch_size=128, epochs=1,
         validation_data=(validation_data, validation_labels),
         callbacks=[callbacks])
     predictions = classifier.predict(validation_data)
-    predictions = predictions.argmax(axis=-1)
-    return classifier, metrics.accuracy_score(predictions, validation_labels)
+    predictions = [argmax(item) for item in predictions]
+    validation_labels = [argmax(item) for item in validation_labels]
+    return metrics.accuracy_score(validation_labels, predictions)
 
 
 def test_model(classifier, test_data, test_labels):
