@@ -48,7 +48,7 @@ def train_model(classifier, training_data, training_labels, validation_data, val
     callbacks = KerasCallback()
     classifier.fit(
         training_data, training_labels,
-        batch_size=512, epochs=10,
+        batch_size=128, epochs=10,
         validation_data=(validation_data, validation_labels),
         callbacks=[callbacks])
     predictions = classifier.predict(validation_data)
