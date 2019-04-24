@@ -47,11 +47,11 @@ def text_generator(path, file_extension):
         yield text.text_to_word_sequence(content)
 
 
-def train_model(classifier, training_data, training_labels, validation_data, validation_labels):
+def train_model(classifier, training_data, training_labels, validation_data, validation_labels, batch_size, epochs):
     callbacks = KerasCallback()
     classifier.fit(
         training_data, training_labels,
-        batch_size=128, epochs=1,
+        batch_size=batch_size, epochs=epochs,
         validation_data=(validation_data, validation_labels),
         callbacks=[callbacks])
     predictions = classifier.predict(validation_data)

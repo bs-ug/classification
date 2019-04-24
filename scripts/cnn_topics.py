@@ -25,13 +25,13 @@ for url in urls:
         for item in sorted(value, key=lambda x: len(x))[::-1]:
             if item in url.lower():
                 if os.path.isfile(os.path.join(settings.CNN_SOURCE_FILES, f"{hash_hex(url)}.story")):
-                    if global_counter[key]["train"] < settings.TRAIN_QUANTITY:
+                    if global_counter[key]["train"] < settings.CNN_TRAIN_QUANTITY:
                         global_counter[key]["train"] += 1
                         train_files[hash_hex(url)] = key
-                    elif global_counter[key]["validation"] < settings.VALIDATION_QUANTITY:
+                    elif global_counter[key]["validation"] < settings.CNN_VALIDATION_QUANTITY:
                         global_counter[key]["validation"] += 1
                         validation_files[hash_hex(url)] = key
-                    elif global_counter[key]["test"] < settings.TEST_QUANTITY:
+                    elif global_counter[key]["test"] < settings.CNN_TEST_QUANTITY:
                         global_counter[key]["test"] += 1
                         test_files[hash_hex(url)] = key
                     stop = True

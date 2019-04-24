@@ -22,12 +22,14 @@ CNN_SOURCE_FILES = "../data/cnn/stories"
 CNN_TRAINING_LABELS = "train.json"
 CNN_VALIDATION_LABELS = "validation.json"
 CNN_TEST_LABELS = "test.json"
-TRAIN_QUANTITY = 2500
-VALIDATION_QUANTITY = 100
-TEST_QUANTITY = 100
+CNN_TRAIN_QUANTITY = 2500
+CNN_VALIDATION_QUANTITY = 100
+CNN_TEST_QUANTITY = 100
 CNN_TRAINING_FILES_PATH = "../data/cnn/train"
 CNN_VALIDATION_FILES_PATH = "../data/cnn/validation"
 CNN_TEST_FILES_PATH = "../data/cnn/test"
 CNN_MODEL_PATH = "../data/cnn/model"
 CNN_MODEL_NAME = "cnn_w2v.model"
 CNN_PICKLE_PATH = "../data/cnn/pickle"
+
+EMBBEDINGS_VECTOR_LENGTH = 100

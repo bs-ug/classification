@@ -5,7 +5,7 @@ from keras.utils import to_categorical
 from scripts import settings
 from scripts.cnn_datasets import prepare_dataset
 from scripts.cnn_embedings import get_word_embeddings
-from scripts.networks import cnn
+from scripts.networks import cnn, cnn2
 from scripts.utils import train_model
 
 train_x, train_y = prepare_dataset(
@@ -25,4 +25,5 @@ embedding_matrix, word_index, train_seq_x, validation_seq_x = get_word_embedding
     os.path.join(settings.CNN_MODEL_PATH, settings.CNN_MODEL_NAME), train_x, validation_x)
 
 classifier = cnn(word_index, embedding_matrix)
-train_model(classifier, train_seq_x, train_y, validation_seq_x, validation_y)
+print(classifier.summary())
+train_model(classifier, train_seq_x, train_y, validation_seq_x, validation_y, batch_size=512, epochs=1)
