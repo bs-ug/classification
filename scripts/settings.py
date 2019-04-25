@@ -29,7 +29,7 @@ CNN_TRAINING_FILES_PATH = "../data/cnn/train"
 CNN_VALIDATION_FILES_PATH = "../data/cnn/validation"
 CNN_TEST_FILES_PATH = "../data/cnn/test"
 CNN_MODEL_PATH = "../data/cnn/model"
-CNN_MODEL_NAME = "cnn_w2v.model"
+CNN_MODEL_NAME = "cnn_w2v_300.model"
 CNN_PICKLE_PATH = "../data/cnn/pickle"
 
-EMBBEDINGS_VECTOR_LENGTH = 100
+EMBEDDINGS_VECTOR_LENGTH = 300

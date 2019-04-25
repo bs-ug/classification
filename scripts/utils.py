@@ -3,25 +3,29 @@ import pickle
 from glob import glob
 
 from gensim.models.callbacks import CallbackAny2Vec
-from keras.callbacks import Callback
+from keras.callbacks import Callback, ModelCheckpoint
 from keras.preprocessing import text
 from sklearn import metrics
 from sklearn.metrics import roc_auc_score
 
 from numpy import argmax
 
+from scripts import settings
+
 
 class W2VCallback(CallbackAny2Vec):
     def __init__(self):
         self.epoch = 0
+        self.loss = 0
 
     def on_epoch_end(self, model):
-        loss = model.get_latest_training_loss()
+        loss = model.get_latest_training_loss() - self.loss
+        self.loss += loss
         print('Loss after epoch {}: {}'.format(self.epoch, loss))
         self.epoch += 1
 
     def on_epoch_begin(self, model):
-        print(f"{self.epoch} started.")
+        print(f"Epoch {self.epoch}.")
 
     def on_train_begin(self, model):
         print("Training started.")
@@ -47,13 +51,15 @@ def text_generator(path, file_extension):
         yield text.text_to_word_sequence(content)
 
 
-def train_model(classifier, training_data, training_labels, validation_data, validation_labels, batch_size, epochs):
-    callbacks = KerasCallback()
+def train_model(classifier, training_data, training_labels, validation_data, validation_labels, batch_size, epochs, model_name):
+    # callbacks = KerasCallback()
+    checkpoint = ModelCheckpoint(os.path.join(settings.CNN_MODEL_PATH, model_name), monitor='loss', verbose=1,
+                                 save_best_only=True, mode='min')
     classifier.fit(
         training_data, training_labels,
         batch_size=batch_size, epochs=epochs,
         validation_data=(validation_data, validation_labels),
-        callbacks=[callbacks])
+        callbacks=[checkpoint])
     predictions = classifier.predict(validation_data)
     predictions = [argmax(item) for item in predictions]
     validation_labels = [argmax(item) for item in validation_labels]

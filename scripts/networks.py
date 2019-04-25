@@ -7,7 +7,7 @@ def cnn(word_index, embedding_matrix):
     input_layer = layers.Input((1881,))
     embedding_layer = layers.Embedding(
         len(word_index) + 1,
-        settings.EMBBEDINGS_VECTOR_LENGTH,
+        settings.EMBEDDINGS_VECTOR_LENGTH,
         weights=[embedding_matrix],
         trainable=False)(input_layer)
     embedding_layer = layers.SpatialDropout1D(0.3)(embedding_layer)
@@ -26,7 +26,7 @@ def cnn2(word_index, embedding_matrix):
     model.add(layers.InputLayer((1881,)))
     model.add(layers.Embedding(
         len(word_index) + 1,
-        settings.EMBBEDINGS_VECTOR_LENGTH,
+        settings.EMBEDDINGS_VECTOR_LENGTH,
         weights=[embedding_matrix],
         trainable=False))
     model.add(layers.SpatialDropout1D(0.3))
@@ -34,6 +34,20 @@ def cnn2(word_index, embedding_matrix):
     model.add(layers.GlobalMaxPool1D())
     model.add(layers.Dense(50, activation="relu"))
     model.add(layers.Dropout(0.1))
+    model.add(layers.Dense(15, activation="sigmoid"))
+    model.compile(optimizer=optimizers.Adam(), loss='binary_crossentropy', metrics=['accuracy'])
+    return model
+
+
+def simple(word_index, embedding_matrix):
+    model = models.Sequential()
+    model.add(layers.Embedding(
+        len(word_index) + 1,
+        settings.EMBEDDINGS_VECTOR_LENGTH,
+        weights=[embedding_matrix],
+        input_length=1881,
+        trainable=False))
+    model.add(layers.Flatten())
     model.add(layers.Dense(15, activation="sigmoid"))
     model.compile(optimizer=optimizers.Adam(), loss='binary_crossentropy', metrics=['accuracy'])
     return model
