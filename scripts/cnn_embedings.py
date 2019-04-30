@@ -11,7 +11,7 @@ def get_word_embeddings(model, train_x, validation_x):
     with open(model, "r", encoding="utf-8") as file:
         for line in file:
             values = line.split()
-            embeddings_index[values[0]] = numpy.asarray(values[1:], dtype='float32')
+            embeddings_index[values[0]] = numpy.asarray(values[-settings.EMBEDDINGS_VECTOR_LENGTH:], dtype='float32')
 
     token = text.Tokenizer()
     token.fit_on_texts(train_x)

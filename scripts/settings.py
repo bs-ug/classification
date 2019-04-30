@@ -32,4 +32,35 @@ CNN_MODEL_PATH = "../data/cnn/model"
 CNN_MODEL_NAME = "cnn_w2v_300.model"
 CNN_PICKLE_PATH = "../data/cnn/pickle"
 
+# Polish news
+POLISH_TOPICS = {
+    0: ["wiadomosci.onet.pl/swiat/",
+        "fakty.interia.pl/swiat/",
+        "www.tvn24.pl/wiadomosci-ze-swiata",
+        "www.fakt.pl/wydarzenia/swiat/",
+        "www.wprost.pl/swiat/",
+        "www.rmf24.pl/fakty/swiat/"],
+    1: ["wiadomosci.onet.pl/kraj/",
+        "fakty.interia.pl/polska/",
+        "www.tvn24.pl/wiadomosci-z-kraju",
+        "www.fakt.pl/wydarzenia/polska/",
+        "www.wprost.pl/kraj/",
+        "www.rmf24.pl/fakty/polska/"]
+}
+POLISH_DATA_DIR = "../data/polish"
+POLISH_SOURCE_URLS_FILE = "links.txt"
+POLISH_SOURCE_FILES = "../data/polish/source"
+POLISH_FILTERED_FILES = "../data/polish/filtered"
+POLISH_TRAINING_LABELS = "train.json"
+POLISH_VALIDATION_LABELS = "validation.json"
+POLISH_TEST_LABELS = "test.json"
+POLISH_TRAIN_QUANTITY = 19000
+POLISH_VALIDATION_QUANTITY = 900
+POLISH_TEST_QUANTITY = 900
+POLISH_TRAINING_FILES_PATH = "../data/polish/train"
+POLISH_VALIDATION_FILES_PATH = "../data/polish/validation"
+POLISH_TEST_FILES_PATH = "../data/polish/test"
+POLISH_MODEL_PATH = "../data/polish/model"
+POLISH_MODEL_NAME = "polish_w2v_300.model"
+
 EMBEDDINGS_VECTOR_LENGTH = 300

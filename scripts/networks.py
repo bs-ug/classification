@@ -3,8 +3,8 @@ from keras import layers, models, optimizers
 from scripts import settings
 
 
-def cnn(word_index, embedding_matrix, number_of_classes):
-    input_layer = layers.Input((1881,))
+def cnn(word_index, embedding_matrix, number_of_classes, vector_length):
+    input_layer = layers.Input((vector_length,))
     embedding_layer = layers.Embedding(
         len(word_index) + 1,
         settings.EMBEDDINGS_VECTOR_LENGTH,
@@ -21,8 +21,8 @@ def cnn(word_index, embedding_matrix, number_of_classes):
     return model
 
 
-def rnn(word_index, embedding_matrix, number_of_classes):
-    input_layer = layers.Input((1881,))
+def rnn(word_index, embedding_matrix, number_of_classes, vector_length):
+    input_layer = layers.Input((vector_length,))
     embedding_layer = layers.Embedding(
         len(word_index) + 1,
         settings.EMBEDDINGS_VECTOR_LENGTH,
@@ -38,13 +38,13 @@ def rnn(word_index, embedding_matrix, number_of_classes):
     return model
 
 
-def simple(word_index, embedding_matrix, number_of_classes):
+def simple(word_index, embedding_matrix, number_of_classes, vector_length):
     model = models.Sequential()
     model.add(layers.Embedding(
         len(word_index) + 1,
         settings.EMBEDDINGS_VECTOR_LENGTH,
         weights=[embedding_matrix],
-        input_length=1881,
+        input_length=vector_length,
         trainable=False))
     model.add(layers.Flatten())
     model.add(layers.Dense(number_of_classes, activation="sigmoid"))
