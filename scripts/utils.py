@@ -1,14 +1,13 @@
 import os
-import pickle
 from glob import glob
 
+import numpy
 from gensim.models.callbacks import CallbackAny2Vec
 from keras.callbacks import Callback, ModelCheckpoint
-from keras.preprocessing import text
+from keras.preprocessing import text, sequence
+from numpy import argmax
 from sklearn import metrics
 from sklearn.metrics import roc_auc_score
-
-from numpy import argmax
 
 from scripts import settings
 
@@ -51,9 +50,10 @@ def text_generator(path, file_extension):
         yield text.text_to_word_sequence(content)
 
 
-def train_model(classifier, training_data, training_labels, validation_data, validation_labels, batch_size, epochs, model_name):
+def train_model(classifier, training_data, training_labels, validation_data, validation_labels, batch_size, epochs,
+                model_path, model_name):
     # callbacks = KerasCallback()
-    checkpoint = ModelCheckpoint(os.path.join(settings.CNN_MODEL_PATH, model_name), monitor='loss', verbose=1,
+    checkpoint = ModelCheckpoint(os.path.join(model_path, model_name), monitor='loss', verbose=1,
                                  save_best_only=True, mode='min')
     classifier.fit(
         training_data, training_labels,
@@ -68,3 +68,26 @@ def train_model(classifier, training_data, training_labels, validation_data, val
 
 def test_model(classifier, test_data, test_labels):
     pass
+
+
+def get_word_embeddings(model, train_x, validation_x, padding_length):
+    embeddings_index = {}
+    with open(model, "r", encoding="utf-8") as file:
+        for line in file:
+            values = line.split()
+            embeddings_index[values[0]] = numpy.asarray(values[-settings.EMBEDDINGS_VECTOR_LENGTH:], dtype='float32')
+
+    token = text.Tokenizer()
+    token.fit_on_texts(train_x)
+    word_index = token.word_index
+
+    train_seq_x = sequence.pad_sequences(token.texts_to_sequences(train_x), maxlen=padding_length)
+    validation_seq_x = sequence.pad_sequences(token.texts_to_sequences(validation_x), maxlen=padding_length)
+
+    embedding_matrix = numpy.zeros((len(word_index) + 1, settings.EMBEDDINGS_VECTOR_LENGTH))
+    for word, i in word_index.items():
+        embedding_vector = embeddings_index.get(word)
+        if embedding_vector is not None:
+            embedding_matrix[i] = embedding_vector
+
+    return embedding_matrix, word_index, train_seq_x, validation_seq_x
