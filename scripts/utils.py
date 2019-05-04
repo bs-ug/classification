@@ -1,12 +1,14 @@
+import json
 import os
 from glob import glob
 
 import numpy
+import pandas
 from gensim.models.callbacks import CallbackAny2Vec
 from keras.callbacks import Callback, ModelCheckpoint
 from keras.preprocessing import text, sequence
 from numpy import argmax
-from sklearn import metrics
+from sklearn import metrics, preprocessing
 from sklearn.metrics import roc_auc_score
 
 from scripts import settings
@@ -91,3 +93,23 @@ def get_word_embeddings(model, train_x, validation_x, padding_length):
             embedding_matrix[i] = embedding_vector
 
     return embedding_matrix, word_index, train_seq_x, validation_seq_x
+
+
+def prepare_data(labels_dict, files_path):
+    labels, texts = [], []
+    for filename, label in labels_dict.items():
+        with open(os.path.join(files_path, f"{filename}.txt"), "r", encoding="utf-8") as file:
+            content = file.read()
+        labels.append(label)
+        texts.append(content)
+    return labels, texts
+
+
+def prepare_dataset(labels_file, files_path):
+    encoder = preprocessing.LabelEncoder()
+    with open(labels_file, "r", encoding="utf-8") as file:
+        labels = json.load(file)
+    dataset = pandas.DataFrame()
+    dataset["labels"], dataset["text"] = prepare_data(labels, files_path)
+    return dataset["text"], encoder.fit_transform(dataset["labels"])
+

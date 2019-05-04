@@ -1,6 +1,7 @@
 import hashlib
 import json
 import os
+from random import choice
 
 from scripts import settings
 
@@ -11,33 +12,53 @@ def hash_hex(s):
     return h.hexdigest()
 
 
-urls = []
+urls = {}
+with open(os.path.join(settings.CNN_DATA_DIR, settings.CNN_SOURCE_URLS_FILE), "r") as file:
+    for line in file:
+        urls[hash_hex(line.strip('\n'))] = line.strip('\n')
+filtered_urls = []
+for name, url in urls.items():
+    for key, value in settings.CNN_TOPICS.items():
+        stop = False
+        for item in sorted(value, reverse=True):
+            if item in url.lower() and (name, key) not in filtered_urls:
+                filtered_urls.append((name, key))
 train_files = {}
 validation_files = {}
 test_files = {}
 global_counter = {key: {"test": 0, "train": 0, "validation": 0} for key in settings.CNN_TOPICS.keys()}
-with open(os.path.join(settings.CNN_DATA_DIR, settings.CNN_URLS_FILE), "r") as file:
-    for line in file:
-        urls.append(line.strip('\n'))
-for url in urls:
-    for key, value in settings.CNN_TOPICS.items():
-        stop = False
-        for item in sorted(value, key=lambda x: len(x))[::-1]:
-            if item in url.lower():
-                if os.path.isfile(os.path.join(settings.CNN_SOURCE_FILES, f"{hash_hex(url)}.story")):
-                    if global_counter[key]["train"] < settings.CNN_TRAIN_QUANTITY:
-                        global_counter[key]["train"] += 1
-                        train_files[hash_hex(url)] = key
-                    elif global_counter[key]["validation"] < settings.CNN_VALIDATION_QUANTITY:
-                        global_counter[key]["validation"] += 1
-                        validation_files[hash_hex(url)] = key
-                    elif global_counter[key]["test"] < settings.CNN_TEST_QUANTITY:
-                        global_counter[key]["test"] += 1
-                        test_files[hash_hex(url)] = key
-                    stop = True
-                    break
-        if stop:
-            break
+for path in ["train", "validation", "test"]:
+    try:
+        os.mkdir(os.path.join(settings.CNN_DATA_DIR, path))
+    except FileExistsError:
+        pass
+while filtered_urls:
+    item, value = choice(filtered_urls)
+    filtered_urls.pop(filtered_urls.index((item, value)))
+    try:
+        with open(os.path.join(settings.CNN_SOURCE_FILES, f"{item}.story"), "r", encoding="utf-8") as file:
+            news = file.read()
+        news = news.split()
+        news = news[:news.index("@highlight")]
+        words = len(news)
+    except FileNotFoundError:
+        continue
+    if words >= settings.CNN_MIN_ARTICLE_LENGTH:
+        if global_counter[value]["train"] < settings.CNN_TRAIN_QUANTITY:
+            train_files[item] = value
+            with open(os.path.join(settings.CNN_TRAINING_FILES_PATH, f"{item}.txt"), "w", encoding="UTF-8") as file:
+                file.write(" ".join(news))
+                global_counter[value]["train"] += 1
+        elif global_counter[value]["validation"] < settings.CNN_VALIDATION_QUANTITY:
+            validation_files[item] = value
+            with open(os.path.join(settings.CNN_VALIDATION_FILES_PATH, f"{item}.txt"), "w", encoding="UTF-8") as file:
+                file.write(" ".join(news))
+                global_counter[value]["validation"] += 1
+        elif global_counter[value]["test"] < settings.CNN_TEST_QUANTITY:
+            test_files[item] = value
+            with open(os.path.join(settings.CNN_TEST_FILES_PATH, f"{item}.txt"), "w", encoding="UTF-8") as file:
+                file.write(" ".join(news))
+                global_counter[value]["test"] += 1
 for name, data in zip(["train", "validation", "test"], [train_files, validation_files, test_files]):
     with open(os.path.join(settings.CNN_DATA_DIR, f"{name}.json"), "w") as output_file:
         json.dump(data, output_file)

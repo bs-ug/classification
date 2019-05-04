@@ -1,12 +1,11 @@
 import os
-from statistics import median
+from statistics import median, mean
 
 from keras.utils import to_categorical
 
 from scripts import settings
-from scripts.cnn_datasets import prepare_dataset
 from scripts.networks import cnn, simple, rnn
-from scripts.utils import get_word_embeddings, train_model
+from scripts.utils import get_word_embeddings, train_model, prepare_dataset
 
 train_x, train_y = prepare_dataset(
     os.path.join(settings.POLISH_DATA_DIR, settings.POLISH_TRAINING_LABELS),
@@ -17,6 +16,12 @@ validation_x, validation_y = prepare_dataset(
 test_x, test_y = prepare_dataset(
     os.path.join(settings.POLISH_DATA_DIR, settings.POLISH_TEST_LABELS),
     settings.POLISH_TEST_FILES_PATH)
+
+max_length = max([len(item.split(' ')) for item in train_x])
+min_length = min([len(item.split(' ')) for item in train_x])
+median_length = median([len(item.split(' ')) for item in train_x])
+mean_length = mean([len(item.split(' ')) for item in train_x])
+
 train_y = to_categorical(train_y)
 validation_y = to_categorical(validation_y)
 test_y = to_categorical(test_y)
