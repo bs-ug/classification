@@ -32,66 +32,40 @@ pattern_read_more = "[(A-ZĄĆĘŁŃÓŚŻŹ)|(0-9)]+[a-ż .,\-\"]*... czytaj da
 def clean_text(content):
     if re.search(pattern_error, content):
         return ""
-
     result = re.search(pattern_br, content)
     while result:
-        start = result.regs[0][0]
-        stop = result.regs[0][1]
-        content = content[:start] + content[stop:]
+        content = content[:result.regs[0][0]] + content[result.regs[0][1]:]
         result = re.search(pattern_br, content)
-
     result = re.search(pattern_n, content)
     while result:
-        start = result.regs[0][0]
-        stop = result.regs[0][1]
-        content = content[:start] + content[stop:]
+        content = content[:result.regs[0][0]] + content[result.regs[0][1]:]
         result = re.search(pattern_n, content)
-
     result = re.search(pattern_see_more_video, content)
     while result:
-        start = result.regs[0][0]
-        stop = result.regs[0][1]
-        content = content[:start] + content[stop - 1:]
+        content = content[:result.regs[0][0]] + content[result.regs[0][1] - 1:]
         result = re.search(pattern_see_more_video, content)
-
     result = re.search(pattern_see_more_video_short, content)
     while result:
-        start = result.regs[0][0]
-        stop = result.regs[0][1]
-        content = content[:start] + content[stop - 1:]
+        content = content[:result.regs[0][0]] + content[result.regs[0][1] - 1:]
         result = re.search(pattern_see_more_video_short, content)
-
     result = re.search(pattern_read_more, content)
     while result:
-        start = result.regs[0][0]
-        stop = result.regs[0][1]
-        content = content[:start] + content[stop - 1:]
+        content = content[:result.regs[0][0]] + content[result.regs[0][1] - 1:]
         result = re.search(pattern_read_more, content)
-
     result = re.search(pattern_author, content)
     while result:
-        start = result.regs[0][0]
-        content = content[:start]
+        content = content[:result.regs[0][0]]
         result = re.search(pattern_author, content)
-
     result = re.search(pattern_like, content)
     while result:
-        start = result.regs[0][0]
-        content = content[:start]
+        content = content[:result.regs[0][0]]
         result = re.search(pattern_like, content)
-
     result = re.search(pattern_blank, content)
     while result:
-        start = result.regs[0][0]
-        stop = result.regs[0][1]
-        content = content[:start] + content[stop - 1:]
+        content = content[:result.regs[0][0]] + content[result.regs[0][1] - 1:]
         result = re.search(pattern_blank, content)
-
     result = re.search(pattern_photo, content)
     while result:
-        start = result.regs[0][0]
-        stop = result.regs[0][1]
-        content = content[:start] + content[stop - 1:]
+        content = content[:result.regs[0][0]] + content[result.regs[0][1] - 1:]
         result = re.search(pattern_photo, content)
-
     return content

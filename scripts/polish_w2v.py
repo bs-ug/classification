@@ -6,7 +6,7 @@ from scripts import settings
 from scripts.utils import text_generator, W2VCallback
 
 
-iterable = text_generator(settings.POLISH_SOURCE_FILES, "txt")
+iterable = text_generator(settings.POLISH_SOURCE_FILES, "txt", clean=True)
 model = Word2Vec([item for item in iterable],
                  size=settings.EMBEDDINGS_VECTOR_LENGTH,
                  window=5, min_count=1, workers=4,

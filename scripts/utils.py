@@ -5,13 +5,14 @@ from glob import glob
 import numpy
 import pandas
 from gensim.models.callbacks import CallbackAny2Vec
-from keras.callbacks import Callback, ModelCheckpoint
+from keras.callbacks import Callback, ModelCheckpoint, TensorBoard
 from keras.preprocessing import text, sequence
 from numpy import argmax
 from sklearn import metrics, preprocessing
 from sklearn.metrics import roc_auc_score
 
 from scripts import settings
+from scripts.polish_cleaning import clean_text
 
 
 class W2VCallback(CallbackAny2Vec):
@@ -45,23 +46,26 @@ class KerasCallback(Callback):
         return
 
 
-def text_generator(path, file_extension):
+def text_generator(path, file_extension, clean=False):
     for file in glob(os.path.join(path, f"*.{file_extension}")):
         with open(file, "r", encoding="utf-8") as input_file:
             content = input_file.read()
+        if clean:
+            content = clean_text(content)
         yield text.text_to_word_sequence(content)
 
 
 def train_model(classifier, training_data, training_labels, validation_data, validation_labels, batch_size, epochs,
-                model_path, model_name):
+                model_path, model_name, logs_path):
     # callbacks = KerasCallback()
     checkpoint = ModelCheckpoint(os.path.join(model_path, model_name), monitor='loss', verbose=1,
                                  save_best_only=True, mode='min')
+    tensorboard = TensorBoard(log_dir=logs_path)
     classifier.fit(
         training_data, training_labels,
         batch_size=batch_size, epochs=epochs,
         validation_data=(validation_data, validation_labels),
-        callbacks=[checkpoint])
+        callbacks=[checkpoint, tensorboard])
     predictions = classifier.predict(validation_data)
     predictions = [argmax(item) for item in predictions]
     validation_labels = [argmax(item) for item in validation_labels]
