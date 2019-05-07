@@ -1,3 +1,4 @@
+DATA_DIR = "../data/"
 # CNN
 # CNN_TOPICS = {
 #     0: ["/crime/"],

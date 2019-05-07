@@ -1,10 +1,11 @@
 import os
+from datetime import datetime
 from statistics import median, mean
 
 from keras.utils import to_categorical
 
 from scripts import settings
-from scripts.networks import cnn, simple, rnn
+from scripts.networks import simple
 from scripts.utils import get_word_embeddings, train_model, prepare_dataset
 
 train_x, train_y = prepare_dataset(
@@ -30,24 +31,43 @@ test_y = to_categorical(test_y)
 
 median_article_length = int(median([len(item.split(' ')) for item in train_x]))
 
+embedding_model = "polish_w2v_300.model"
 embedding_matrix, word_index, train_seq_x, validation_seq_x = get_word_embeddings(
-    os.path.join(settings.POLISH_MODEL_PATH, "polish_w2v_300.model"), train_x, validation_x, median_article_length)
+    os.path.join(settings.POLISH_MODEL_PATH, embedding_model), train_x, validation_x, median_article_length)
 
 # TODO: select network to train via script params
 # classifier = cnn(word_index, embedding_matrix, len(settings.POLISH_TOPICS), median_article_length)
 # print(classifier.summary())
-# train_model(classifier, train_seq_x, train_y, validation_seq_x, validation_y, batch_size=128, epochs=50,
-#             model_path=settings.POLISH_MODEL_PATH, model_name="cnn_model.hdf5",
-#             logs_path=os.path.join(settings.POLISH_DATA_DIR, "logs"))
+# model_name="cnn.hdf5"
+# batch_size=128
+# epochs=50
+# log_dir = os.path.join(settings.DATA_DIR, "logs",
+#                        f"polish-{model_name.split('.')[0]}-{embedding_model.split('.')[0]}-{batch_size}-{epochs}"
+#                        f"-{datetime.now().strftime('%Y%m%dT%H%M')}")
+# os.makedirs(log_dir, exist_ok=True)
+# train_model(classifier, train_seq_x, train_y, validation_seq_x, validation_y, batch_size=batch_size, epochs=epochs,
+#             model_path=settings.POLISH_MODEL_PATH, model_name=model_name, logs_path=log_dir)
 #
 classifier = simple(word_index, embedding_matrix, len(settings.POLISH_TOPICS), median_article_length)
 print(classifier.summary())
-train_model(classifier, train_seq_x, train_y, validation_seq_x, validation_y, batch_size=128, epochs=50,
-            model_path=settings.POLISH_MODEL_PATH, model_name="simple_model.hdf5",
-            logs_path=os.path.join(settings.POLISH_DATA_DIR, "logs"))
+model_name = "simple.hdf5"
+batch_size = 128
+epochs = 50
+log_dir = os.path.join(settings.DATA_DIR, "logs",
+                       f"polish-{model_name.split('.')[0]}-{embedding_model.split('.')[0]}-{batch_size}-{epochs}"
+                       f"-{datetime.now().strftime('%Y%m%dT%H%M')}")
+os.makedirs(log_dir, exist_ok=True)
+train_model(classifier, train_seq_x, train_y, validation_seq_x, validation_y, batch_size=batch_size, epochs=epochs,
+            model_path=settings.POLISH_MODEL_PATH, model_name=model_name, logs_path=log_dir)
 
 # classifier = rnn(word_index, embedding_matrix, len(settings.POLISH_TOPICS), median_article_length)
 # print(classifier.summary())
-# train_model(classifier, train_seq_x, train_y, validation_seq_x, validation_y, batch_size=256, epochs=50,
-#             model_path=settings.POLISH_MODEL_PATH, model_name="rnn_model.hdf5",
-#             logs_path=os.path.join(settings.POLISH_DATA_DIR, "logs"))
+# model_name="rnn.hdf5"
+# batch_size=128
+# epochs=50
+# log_dir = os.path.join(settings.DATA_DIR, "logs",
+#                        f"polish-{model_name.split('.')[0]}-{embedding_model.split('.')[0]}-{batch_size}-{epochs}"
+#                        f"-{datetime.now().strftime('%Y%m%dT%H%M')}")
+# os.makedirs(log_dir, exist_ok=True)
+# train_model(classifier, train_seq_x, train_y, validation_seq_x, validation_y, batch_size=batch_size, epochs=epochs,
+#             model_path=settings.POLISH_MODEL_PATH, model_name=model_name, logs_path=log_dir)
