@@ -83,5 +83,19 @@ RZ_TOPICS = {
 }
 RZ_DATA_DIR = "../data/rz"
 RZ_LABELS = "labels.json"
+RZ_SOURCE_FILES = "../data/rz/source"
+RZ_MODEL_PATH = "../data/rz/model"
+RZ_MODEL_NAME = "rz_w2v_300.model"
+RZ_TRAINING_LABELS = "train.json"
+RZ_VALIDATION_LABELS = "validation.json"
+RZ_TEST_LABELS = "test.json"
+RZ_TRAINING_FILES_PATH = "../data/rz/train"
+RZ_VALIDATION_FILES_PATH = "../data/rz/validation"
+RZ_TEST_FILES_PATH = "../data/rz/test"
+RZ_TRAIN_QUANTITY = 5000
+RZ_VALIDATION_QUANTITY = 1000
+RZ_TEST_QUANTITY = 1000
+RZ_MIN_ARTICLE_LENGTH = 200
+
 
 EMBEDDINGS_VECTOR_LENGTH = 300
