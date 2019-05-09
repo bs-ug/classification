@@ -71,4 +71,17 @@ POLISH_MODEL_PATH = "../data/polish/model"
 POLISH_MODEL_NAME = "polish_w2v_300.model"
 POLISH_MIN_ARTICLE_LENGTH = 200
 
+RZ_TOPICS = {
+    "gazeta/Ekonomia": 0,
+    "gazeta/Prawo": 1,
+    "gazeta/Świat": 2,
+    "gazeta/Kraj": 3,
+    "gazeta/Sport": 4,
+    "gazeta/Gazeta": 5,
+    "gazeta/Kultura": 6,
+    "gazeta/Nauka i Technika": 7
+}
+RZ_DATA_DIR = "../data/rz"
+RZ_LABELS = "labels.json"
+
 EMBEDDINGS_VECTOR_LENGTH = 300

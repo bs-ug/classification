@@ -1,10 +1,11 @@
-from glob import glob
+import json
 import os
-from scripts import settings
 import re
+from glob import glob
 
+from scripts import settings
 
-pattern_category = '<META NAME="DZIAL" CONTENT="([, A-Ża-ż0-9\/\"]*)">'
+pattern_category = '<META NAME="DZIAL" CONTENT="([, A-Ża-ż0-9\/\"\-]*)">'
 pattern_p = "<[pP]?>"
 pattern_meta = "<META NAME"
 pattern_tag = "<[ =a-zA-Z0-9/]+>"
@@ -13,7 +14,6 @@ pattern_blank = "  +"
 
 categories = {}
 
-
 for file in glob(os.path.join(settings.DATA_DIR, "rz", "Rzeczpospolita", "*.html")):
     with open(file, "r", encoding="iso-8859-2") as source:
         source_text = source.read()
@@ -21,21 +21,25 @@ for file in glob(os.path.join(settings.DATA_DIR, "rz", "Rzeczpospolita", "*.html
     result = re.search(pattern_category, source_text)
     try:
         category = source_text[result.regs[1][0]:result.regs[1][1]]
-        if category in categories.keys():
-            categories[category] += 1
-        else:
-            categories[category] = 1
+        if category in settings.RZ_TOPICS.keys():
+            categories[file_name] = settings.RZ_TOPICS[category]
     except:
-        pass
+        print(f"category: {file_name}")
+
+    if os.path.exists(os.path.join(settings.DATA_DIR, "rz", "source", f"{file_name}.txt")):
+        continue
 
     result = re.search(pattern_p, source_text)
     try:
         source_text = source_text[result.regs[0][1]:]
     except:
-        print(file_name)
+        print(f"p: {file_name}")
 
     result = re.search(pattern_meta, source_text)
-    source_text = source_text[:result.regs[0][0]]
+    try:
+        source_text = source_text[:result.regs[0][0]]
+    except:
+        print(f"meta: {file_name}")
 
     result = re.search(pattern_tag, source_text)
     while result:
@@ -55,6 +59,5 @@ for file in glob(os.path.join(settings.DATA_DIR, "rz", "Rzeczpospolita", "*.html
     with open(os.path.join(settings.DATA_DIR, "rz", "source", f"{file_name}.txt"), "w", encoding="utf-8") as output:
         output.write(source_text)
 
-print(categories)
-
-
+with open(os.path.join(settings.RZ_DATA_DIR, settings.RZ_LABELS), "w", encoding="utf-8") as labels_file:
+    json.dump(categories, labels_file)

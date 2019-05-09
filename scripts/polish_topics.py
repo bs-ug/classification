@@ -10,7 +10,6 @@ with open(os.path.join(settings.POLISH_DATA_DIR, settings.POLISH_SOURCE_URLS_FIL
     urls = json.load(file)
 for name, url in urls.items():
     for key, value in settings.POLISH_TOPICS.items():
-        stop = False
         for item in sorted(value, key=lambda x: len(x))[::-1]:
             if item in url.lower():
                 filtered_urls.append((name, key))
