@@ -12,4 +12,4 @@ model = Word2Vec([item for item in iterable],
                  window=5, min_count=1, workers=4,
                  compute_loss=True,
                  callbacks=[W2VCallback()])
-model.wv.save_word2vec_format(os.path.join(settings.POLISH_MODEL_PATH, settings.POLISH_MODEL_NAME), binary=False)
+model.wv.save_word2vec_format(os.path.join(settings.POLISH_DATA_DIR, settings.MODELS_PATH, settings.POLISH_MODEL_NAME), binary=False)

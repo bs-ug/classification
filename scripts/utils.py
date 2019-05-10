@@ -1,6 +1,5 @@
 import json
 import os
-from datetime import datetime
 from glob import glob
 
 import numpy
@@ -61,7 +60,10 @@ def train_model(classifier, training_data, training_labels, validation_data, val
     # callbacks = KerasCallback()
     checkpoint = ModelCheckpoint(os.path.join(model_path, model_name), monitor='loss', verbose=1,
                                  save_best_only=True, mode='min')
-    tensorboard = TensorBoard(log_dir=logs_path, embeddings_freq=epochs, embeddings_data=validation_data)
+    if os.environ.get("CUDA_VERSION"):
+        tensorboard = TensorBoard(log_dir=logs_path, embeddings_freq=epochs, embeddings_data=validation_data)
+    else:
+        tensorboard = TensorBoard(log_dir=logs_path, embeddings_freq=epochs)
     classifier.fit(
         training_data, training_labels,
         batch_size=batch_size, epochs=epochs,
@@ -117,4 +119,3 @@ def prepare_dataset(labels_file, files_path):
     dataset = pandas.DataFrame()
     dataset["labels"], dataset["text"] = prepare_data(labels, files_path)
     return dataset["text"], encoder.fit_transform(dataset["labels"])
-

@@ -32,18 +32,18 @@ while filtered_urls:
     if settings.POLISH_MIN_ARTICLE_LENGTH <= words:
         if global_counter[value]["train"] < settings.POLISH_TRAIN_QUANTITY:
             train_files[item] = value
-            with open(os.path.join(settings.POLISH_TRAINING_FILES_PATH, f"{item}.txt"), "w", encoding="UTF-8") as file:
+            with open(os.path.join(settings.POLISH_DATA_DIR, settings.TRAINING_FILES, f"{item}.txt"), "w", encoding="UTF-8") as file:
                 file.write(content)
                 global_counter[value]["train"] += 1
         elif global_counter[value]["validation"] < settings.POLISH_VALIDATION_QUANTITY:
             validation_files[item] = value
-            with open(os.path.join(settings.POLISH_VALIDATION_FILES_PATH, f"{item}.txt"), "w",
+            with open(os.path.join(settings.POLISH_DATA_DIR, settings.VALIDATION_FILES, f"{item}.txt"), "w",
                       encoding="UTF-8") as file:
                 file.write(content)
                 global_counter[value]["validation"] += 1
         elif global_counter[value]["test"] < settings.POLISH_TEST_QUANTITY:
             test_files[item] = value
-            with open(os.path.join(settings.POLISH_TEST_FILES_PATH, f"{item}.txt"), "w", encoding="UTF-8") as file:
+            with open(os.path.join(settings.POLISH_DATA_DIR, settings.TEST_FILES, f"{item}.txt"), "w", encoding="UTF-8") as file:
                 file.write(content)
                 global_counter[value]["test"] += 1
 for name, data in zip(["train", "validation", "test"], [train_files, validation_files, test_files]):

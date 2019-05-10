@@ -46,17 +46,17 @@ while filtered_urls:
     if words >= settings.CNN_MIN_ARTICLE_LENGTH:
         if global_counter[value]["train"] < settings.CNN_TRAIN_QUANTITY:
             train_files[item] = value
-            with open(os.path.join(settings.CNN_TRAINING_FILES_PATH, f"{item}.txt"), "w", encoding="UTF-8") as file:
+            with open(os.path.join(settings.CNN_DATA_DIR, settings.TRAINING_FILES, f"{item}.txt"), "w", encoding="UTF-8") as file:
                 file.write(" ".join(news))
                 global_counter[value]["train"] += 1
         elif global_counter[value]["validation"] < settings.CNN_VALIDATION_QUANTITY:
             validation_files[item] = value
-            with open(os.path.join(settings.CNN_VALIDATION_FILES_PATH, f"{item}.txt"), "w", encoding="UTF-8") as file:
+            with open(os.path.join(settings.CNN_DATA_DIR, settings.VALIDATION_FILES, f"{item}.txt"), "w", encoding="UTF-8") as file:
                 file.write(" ".join(news))
                 global_counter[value]["validation"] += 1
         elif global_counter[value]["test"] < settings.CNN_TEST_QUANTITY:
             test_files[item] = value
-            with open(os.path.join(settings.CNN_TEST_FILES_PATH, f"{item}.txt"), "w", encoding="UTF-8") as file:
+            with open(os.path.join(settings.CNN_DATA_DIR, settings.TEST_FILES, f"{item}.txt"), "w", encoding="UTF-8") as file:
                 file.write(" ".join(news))
                 global_counter[value]["test"] += 1
 for name, data in zip(["train", "validation", "test"], [train_files, validation_files, test_files]):

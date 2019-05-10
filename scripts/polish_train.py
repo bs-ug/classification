@@ -9,14 +9,14 @@ from scripts.networks import simple
 from scripts.utils import get_word_embeddings, train_model, prepare_dataset
 
 train_x, train_y = prepare_dataset(
-    os.path.join(settings.POLISH_DATA_DIR, settings.POLISH_TRAINING_LABELS),
-    settings.POLISH_TRAINING_FILES_PATH)
+    os.path.join(settings.POLISH_DATA_DIR, settings.TRAINING_LABELS),
+    os.path.join(settings.POLISH_DATA_DIR, settings.TRAINING_FILES))
 validation_x, validation_y = prepare_dataset(
-    os.path.join(settings.POLISH_DATA_DIR, settings.POLISH_VALIDATION_LABELS),
-    settings.POLISH_VALIDATION_FILES_PATH)
+    os.path.join(settings.POLISH_DATA_DIR, settings.VALIDATION_LABELS),
+    os.path.join(settings.POLISH_DATA_DIR, settings.VALIDATION_FILES))
 test_x, test_y = prepare_dataset(
-    os.path.join(settings.POLISH_DATA_DIR, settings.POLISH_TEST_LABELS),
-    settings.POLISH_TEST_FILES_PATH)
+    os.path.join(settings.POLISH_DATA_DIR, settings.TEST_LABELS),
+    os.path.join(settings.POLISH_DATA_DIR, settings.TEST_FILES))
 
 max_length = int(max([len(item.split(' ')) for item in train_x]))
 min_length = int(min([len(item.split(' ')) for item in train_x]))
@@ -33,7 +33,7 @@ median_article_length = int(median([len(item.split(' ')) for item in train_x]))
 
 embedding_model = "polish_w2v_300.model"
 embedding_matrix, word_index, train_seq_x, validation_seq_x = get_word_embeddings(
-    os.path.join(settings.POLISH_MODEL_PATH, embedding_model), train_x, validation_x, median_article_length)
+    os.path.join(settings.POLISH_DATA_DIR, settings.MODELS_PATH, embedding_model), train_x, validation_x, median_article_length)
 
 # TODO: select network to train via script params
 # classifier = cnn(word_index, embedding_matrix, len(settings.POLISH_TOPICS), median_article_length)
@@ -58,7 +58,7 @@ log_dir = os.path.join(settings.DATA_DIR, "logs",
                        f"-{datetime.now().strftime('%Y%m%dT%H%M')}")
 os.makedirs(log_dir, exist_ok=True)
 train_model(classifier, train_seq_x, train_y, validation_seq_x, validation_y, batch_size=batch_size, epochs=epochs,
-            model_path=settings.POLISH_MODEL_PATH, model_name=model_name, logs_path=log_dir)
+            model_path=os.path.join(settings.POLISH_DATA_DIR, settings.MODELS_PATH), model_name=model_name, logs_path=log_dir)
 
 # classifier = rnn(word_index, embedding_matrix, len(settings.POLISH_TOPICS), median_article_length)
 # print(classifier.summary())
