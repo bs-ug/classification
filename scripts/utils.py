@@ -61,7 +61,7 @@ def train_model(classifier, training_data, training_labels, validation_data, val
     # callbacks = KerasCallback()
     checkpoint = ModelCheckpoint(os.path.join(model_path, model_name), monitor='loss', verbose=1,
                                  save_best_only=True, mode='min')
-    tensorboard = TensorBoard(log_dir=logs_path, embeddings_freq=epochs)
+    tensorboard = TensorBoard(log_dir=logs_path, embeddings_freq=epochs, embeddings_data=validation_data)
     classifier.fit(
         training_data, training_labels,
         batch_size=batch_size, epochs=epochs,

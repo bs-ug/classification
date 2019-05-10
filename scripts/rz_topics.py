@@ -3,7 +3,6 @@ import os
 from random import choice
 
 from scripts import settings
-from scripts.polish_cleaning import clean_text
 
 
 with open(os.path.join(settings.RZ_DATA_DIR, settings.RZ_LABELS), "r") as file:
