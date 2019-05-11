@@ -1,6 +1,6 @@
 import json
 import os
-from glob import glob
+from glob import glob, iglob
 
 import numpy
 import pandas
@@ -46,10 +46,13 @@ class KerasCallback(Callback):
         return
 
 
-def text_generator(path, file_extension, clean=False):
-    for file in glob(os.path.join(path, f"*.{file_extension}")):
+def text_generator(paths, clean=False):
+    for file in glob(paths):
         with open(file, "r", encoding="utf-8") as input_file:
-            content = input_file.read()
+            try:
+                content = input_file.read()
+            except UnicodeDecodeError:
+                continue
         if clean:
             content = clean_text(content)
         yield text.text_to_word_sequence(content)

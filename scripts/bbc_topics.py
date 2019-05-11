@@ -14,7 +14,9 @@ for path in ["train", "validation", "test"]:
     try:
         os.mkdir(os.path.join(settings.BBC_DATA_DIR, path))
     except FileExistsError:
-        pass
+        files = glob(os.path.join(settings.BBC_DATA_DIR, path, "*.txt"))
+        for file in files:
+            os.remove(file)
 for label, path in settings.BBC_TOPICS.items():
     for file in glob(os.path.join(settings.BBC_DATA_DIR, path, "*.txt")):
         counter += 1
