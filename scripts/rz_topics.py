@@ -1,5 +1,6 @@
 import json
 import os
+from glob import glob
 from random import choice
 
 from scripts import settings
@@ -15,7 +16,9 @@ for path in ["train", "validation", "test"]:
     try:
         os.mkdir(os.path.join(settings.RZ_DATA_DIR, path))
     except FileExistsError:
-        pass
+        files = glob(os.path.join(settings.RZ_DATA_DIR, path, "*.txt"))
+        for file in files:
+            os.remove(file)
 labels_list = [(key, value) for key, value in labels.items()]
 while labels_list:
     item, value = choice(labels_list)
@@ -23,7 +26,7 @@ while labels_list:
     with open(os.path.join(settings.RZ_SOURCE_FILES, f"{item}.txt"), "r", encoding="utf-8") as file:
         content = file.read()
     words = len(content.split())
-    if settings.RZ_MIN_ARTICLE_LENGTH <= words:
+    if words >= settings.RZ_MIN_ARTICLE_LENGTH:
         if global_counter[value]["train"] < settings.RZ_TRAIN_QUANTITY:
             train_files[item] = value
             with open(os.path.join(settings.RZ_DATA_DIR, settings.TRAINING_FILES, f"{item}.txt"), "w", encoding="UTF-8") as file:
@@ -43,3 +46,5 @@ for name, data in zip(["train", "validation", "test"], [train_files, validation_
     with open(os.path.join(settings.RZ_DATA_DIR, f"{name}.json"), "w") as output_file:
         json.dump(data, output_file)
     print(f"{len(data)} {name} labels saved")
+
+print(global_counter)

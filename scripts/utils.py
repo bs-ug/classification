@@ -2,10 +2,11 @@ import json
 import os
 from glob import glob, iglob
 
-import numpy
+import numpy as np
 import pandas
 from gensim.models.callbacks import CallbackAny2Vec
 from keras.callbacks import Callback, ModelCheckpoint, TensorBoard
+from keras.models import load_model
 from keras.preprocessing import text, sequence
 from numpy import argmax
 from sklearn import metrics, preprocessing
@@ -75,19 +76,24 @@ def train_model(classifier, training_data, training_labels, validation_data, val
     predictions = classifier.predict(validation_data)
     predictions = [argmax(item) for item in predictions]
     validation_labels = [argmax(item) for item in validation_labels]
-    return metrics.accuracy_score(validation_labels, predictions)
+    return classifier, metrics.accuracy_score(validation_labels, predictions)
 
 
-def test_model(classifier, test_data, test_labels):
-    pass
+def test_model(model_path, test_data, test_labels, batch_size):
+    classifier = load_model(model_path)
+    loss, acc = classifier.evaluate(test_data, test_labels, batch_size=batch_size)
+    predictions = classifier.predict(test_data, batch_size=batch_size)
+    categories = np.argmax(predictions, axis=1)
+    unique, counts = np.unique(categories, return_counts=True)
+    return loss, acc, dict(zip(unique, counts))
 
 
-def get_word_embeddings(model, train_x, validation_x, padding_length):
+def get_word_embeddings(model, train_x, validation_x, test_x, padding_length):
     embeddings_index = {}
     with open(model, "r", encoding="utf-8") as file:
         for line in file:
             values = line.split()
-            embeddings_index[values[0]] = numpy.asarray(values[-settings.EMBEDDINGS_VECTOR_LENGTH:], dtype='float32')
+            embeddings_index[values[0]] = np.asarray(values[-settings.EMBEDDINGS_VECTOR_LENGTH:], dtype='float32')
 
     token = text.Tokenizer()
     token.fit_on_texts(train_x)
@@ -95,14 +101,15 @@ def get_word_embeddings(model, train_x, validation_x, padding_length):
 
     train_seq_x = sequence.pad_sequences(token.texts_to_sequences(train_x), maxlen=padding_length)
     validation_seq_x = sequence.pad_sequences(token.texts_to_sequences(validation_x), maxlen=padding_length)
+    test_seq_x = sequence.pad_sequences(token.texts_to_sequences(test_x), maxlen=padding_length)
 
-    embedding_matrix = numpy.zeros((len(word_index) + 1, settings.EMBEDDINGS_VECTOR_LENGTH))
+    embedding_matrix = np.zeros((len(word_index) + 1, settings.EMBEDDINGS_VECTOR_LENGTH))
     for word, i in word_index.items():
         embedding_vector = embeddings_index.get(word)
         if embedding_vector is not None:
             embedding_matrix[i] = embedding_vector
 
-    return embedding_matrix, word_index, train_seq_x, validation_seq_x
+    return embedding_matrix, word_index, train_seq_x, validation_seq_x, test_seq_x
 
 
 def prepare_data(labels_dict, files_path):

@@ -9,7 +9,7 @@ pattern_line = "\|"
 pattern_category = '<META NAME="DZIAL" CONTENT="([, A-Ża-ż0-9\/\"\-]*)">'
 pattern_p = "<[pP]?>"
 pattern_meta = "<META NAME"
-pattern_tag = "<[ =a-zA-Z0-9/]+>"
+pattern_tag = "<[ _\-\.=a-zA-Z0-9/\"]+>"
 pattern_n = "\n *"
 pattern_blank = "  +"
 categories = {}
@@ -21,7 +21,7 @@ for file in glob(os.path.join(settings.DATA_DIR, "rz", "Rzeczpospolita", "*.html
     file_name = file.split('\\')[-1].split('.')[0]
 
     if re.search(pattern_line, source_text):
-        print(f"line: {file_name}")
+        # print(f"line: {file_name}")
         continue
 
     result = re.search(pattern_category, source_text)

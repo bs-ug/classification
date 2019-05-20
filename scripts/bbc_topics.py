@@ -48,3 +48,5 @@ for name, data in zip(["train", "validation", "test"], [train_files, validation_
     with open(os.path.join(settings.BBC_DATA_DIR, f"{name}.json"), "w") as output_file:
         json.dump(data, output_file)
     print(f"{len(data)} {name} labels saved")
+
+print(global_counter)

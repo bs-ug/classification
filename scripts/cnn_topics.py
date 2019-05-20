@@ -1,6 +1,7 @@
 import hashlib
 import json
 import os
+from glob import glob
 from random import choice
 
 from scripts import settings
@@ -31,7 +32,9 @@ for path in ["train", "validation", "test"]:
     try:
         os.mkdir(os.path.join(settings.CNN_DATA_DIR, path))
     except FileExistsError:
-        pass
+        files = glob(os.path.join(settings.CNN_DATA_DIR, path, "*.txt"))
+        for file in files:
+            os.remove(file)
 while filtered_urls:
     item, value = choice(filtered_urls)
     filtered_urls.pop(filtered_urls.index((item, value)))

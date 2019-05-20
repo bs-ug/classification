@@ -6,41 +6,51 @@ TRAINING_FILES = "train"
 VALIDATION_FILES = "validation"
 TEST_FILES = "test"
 MODELS_PATH = "../data/models"
-EMBEDDINGS_VECTOR_LENGTH = 300
+EMBEDDINGS_VECTOR_LENGTH = 100
+PADDING_LENGTH = 400
 
 # CNN
-CNN_TOPICS = {
-    0: ["/crime/"],
-    1: ["/health/"],
-    2: ["/politics/"],
-    3: ["/showbiz/"],
-    4: ["/sport/"],
-    5: ["/tech/"],
-    6: ["/travel/"],
-    7: ["/us/"],
-    8: ["/africa/", "/world/africa/"],
-    9: ["/world/americas/"],
-    10: ["/world/asiapcf/", "/asia/", "/world/asia/"],
-    11: ["/europe/", "/world/europe/"],
-    12: ["/middleeast/", "/world/meast/"],
-    13: ["/living/"],
-    14: ["/opinion/", "/opinions/"]
-}
+# CNN_TOPICS = {
+#     0: ["/crime/"],
+#     1: ["/health/"],
+#     2: ["/politics/"],
+#     3: ["/showbiz/"],
+#     4: ["/sport/"],
+#     5: ["/tech/"],
+#     6: ["/travel/"],
+#     7: ["/us/"],
+#     8: ["/africa/", "/world/africa/"],
+#     9: ["/world/americas/"],
+#     10: ["/world/asiapcf/", "/asia/", "/world/asia/"],
+#     11: ["/europe/", "/world/europe/"],
+#     12: ["/middleeast/", "/world/meast/"],
+#     13: ["/living/"],
+#     14: ["/opinion/", "/opinions/"]
+# }
 # CNN_TOPICS = {
 #     0: ["/us/", "/world/americas/", "/US/law/", "/justice/"],
 #     1: ["/africa/", "/asia/", "/europe/", "/middleeast/",
 #         "/world/africa/", "/world/asiapcf/", "/world/asia/", "/world/europe/", "/world/meast/"]
 # }
+CNN = "cnn"
+CNN_TOPICS = {
+    0: ['/world/'],
+    1: ['/us/'],
+    2: ['/sport/'],
+    3: ['/showbiz/', '/entertainment/'],
+    4: ['/politics/'],
+    5: ['/opinion/', '/opinions/']
+}
 CNN_DATA_DIR = "../data/cnn"
 CNN_SOURCE_URLS_FILE = "wayback_urls.txt"
 CNN_SOURCE_FILES = "../data/cnn/stories"
-CNN_TRAIN_QUANTITY = 2500 # 10000
-CNN_VALIDATION_QUANTITY = 100 # 1000
-CNN_TEST_QUANTITY = 100 # 1000
-CNN_MODEL_NAME = "cnn_300.w2v"
-CNN_MIN_ARTICLE_LENGTH = 200
+CNN_TRAIN_QUANTITY = 5000 # 10000
+CNN_VALIDATION_QUANTITY = 1000 # 1000
+CNN_TEST_QUANTITY = 1000 # 1000
+CNN_MIN_ARTICLE_LENGTH = 100
 
 # BBC
+BBC = "bbc"
 BBC_TOPICS = {
     0: "business",
     1: "entertainment",
@@ -49,13 +59,13 @@ BBC_TOPICS = {
     5: "tech"
 }
 BBC_DATA_DIR = "../data/bbc"
-BBC_MODEL_NAME = "bbc_300.w2v"
 BBC_TRAIN_QUANTITY = 300
-BBC_VALIDATION_QUANTITY = 50
-BBC_TEST_QUANTITY = 50
-BBC_MIN_ARTICLE_LENGTH = 200
+BBC_VALIDATION_QUANTITY = 40
+BBC_TEST_QUANTITY = 40
+BBC_MIN_ARTICLE_LENGTH = 100
 
 # Polish news
+POLISH = "polish"
 POLISH_TOPICS = {
     0: ["wiadomosci.onet.pl/swiat/",
         "fakty.interia.pl/swiat/",
@@ -77,25 +87,23 @@ POLISH_FILTERED_FILES = "../data/polish/filtered"
 POLISH_TRAIN_QUANTITY = 10000
 POLISH_VALIDATION_QUANTITY = 1000
 POLISH_TEST_QUANTITY = 1000
-POLISH_MODEL_NAME = "polish_300.w2v"
 POLISH_MIN_ARTICLE_LENGTH = 200
 
 # Rzeczpospolita news
+RZ = "rz"
 RZ_TOPICS = {
-    "gazeta/Ekonomia": 0,
-    "gazeta/Prawo": 1,
-    "gazeta/Świat": 2,
-    "gazeta/Kraj": 3,
-    "gazeta/Sport": 4,
-    "gazeta/Gazeta": 5,
-    "gazeta/Kultura": 6,
-    "gazeta/Nauka i Technika": 7
+    # "gazeta/Ekonomia": 0,
+    "gazeta/Prawo": 0,
+    "gazeta/Świat": 1,
+    "gazeta/Kraj": 2,
+    "gazeta/Sport": 3,
+    "gazeta/Kultura": 4,
+    "gazeta/Nauka i Technika": 5
 }
 RZ_DATA_DIR = "../data/rz"
 RZ_LABELS = "labels.json"
 RZ_SOURCE_FILES = "../data/rz/source"
-RZ_MODEL_NAME = "rz_300.w2v"
 RZ_TRAIN_QUANTITY = 5000
 RZ_VALIDATION_QUANTITY = 1000
 RZ_TEST_QUANTITY = 1000
-RZ_MIN_ARTICLE_LENGTH = 200
+RZ_MIN_ARTICLE_LENGTH = 100

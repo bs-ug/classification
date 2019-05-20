@@ -2,7 +2,7 @@
 
 A comparison of neural network based text classification of news articles in English and Polish languages.
 
-## Data
+## Datasets
 
 ### CNN
 CNN news are taken from [DeepMind Q&A Dataset](https://cs.nyu.edu/~kcho/DMQA/).
