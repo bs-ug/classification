@@ -10,36 +10,14 @@ EMBEDDINGS_VECTOR_LENGTH = 100
 PADDING_LENGTH = 400
 
 # CNN
-# CNN_TOPICS = {
-#     0: ["/crime/"],
-#     1: ["/health/"],
-#     2: ["/politics/"],
-#     3: ["/showbiz/"],
-#     4: ["/sport/"],
-#     5: ["/tech/"],
-#     6: ["/travel/"],
-#     7: ["/us/"],
-#     8: ["/africa/", "/world/africa/"],
-#     9: ["/world/americas/"],
-#     10: ["/world/asiapcf/", "/asia/", "/world/asia/"],
-#     11: ["/europe/", "/world/europe/"],
-#     12: ["/middleeast/", "/world/meast/"],
-#     13: ["/living/"],
-#     14: ["/opinion/", "/opinions/"]
-# }
-# CNN_TOPICS = {
-#     0: ["/us/", "/world/americas/", "/US/law/", "/justice/"],
-#     1: ["/africa/", "/asia/", "/europe/", "/middleeast/",
-#         "/world/africa/", "/world/asiapcf/", "/world/asia/", "/world/europe/", "/world/meast/"]
-# }
 CNN = "cnn"
 CNN_TOPICS = {
     0: ['/world/'],
     1: ['/us/'],
-    2: ['/sport/'],
-    3: ['/showbiz/', '/entertainment/'],
-    4: ['/politics/'],
-    5: ['/opinion/', '/opinions/']
+    2: ['/politics/'],
+    3: ['/sport/'],
+    4: ['/opinion/', '/opinions/'],
+    5: ['/showbiz/', '/entertainment/']
 }
 CNN_DATA_DIR = "../data/cnn"
 CNN_SOURCE_URLS_FILE = "wayback_urls.txt"
@@ -55,8 +33,8 @@ BBC_TOPICS = {
     0: "business",
     1: "entertainment",
     2: "politics",
-    4: "sport",
-    5: "tech"
+    3: "sport",
+    4: "tech"
 }
 BBC_DATA_DIR = "../data/bbc"
 BBC_TRAIN_QUANTITY = 300
@@ -92,10 +70,9 @@ POLISH_MIN_ARTICLE_LENGTH = 200
 # Rzeczpospolita news
 RZ = "rz"
 RZ_TOPICS = {
-    # "gazeta/Ekonomia": 0,
-    "gazeta/Prawo": 0,
-    "gazeta/Świat": 1,
-    "gazeta/Kraj": 2,
+    "gazeta/Świat": 0,
+    "gazeta/Kraj": 1,
+    "gazeta/Prawo": 2,
     "gazeta/Sport": 3,
     "gazeta/Kultura": 4,
     "gazeta/Nauka i Technika": 5

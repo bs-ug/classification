@@ -20,7 +20,7 @@ for path in ["train", "validation", "test"]:
 for label, path in settings.BBC_TOPICS.items():
     for file in glob(os.path.join(settings.BBC_DATA_DIR, path, "*.txt")):
         counter += 1
-        filename = f"{counter:05d}"
+        filename = f"{counter:04d}"
         with open(file, "r", encoding="utf-8") as input_file:
             try:
                 input_text = input_file.read()
