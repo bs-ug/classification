@@ -30,27 +30,27 @@ validation_y = to_categorical(validation_y)
 test_y = to_categorical(test_y)
 
 embedding_matrix, word_index, train_seq_x, validation_seq_x, test_seq_x = get_word_embeddings(
-    os.path.join(settings.MODELS_PATH, "polish_100.w2v"),
+    os.path.join(settings.MODELS_PATH, "rz_100.w2v"),
     train_x, validation_x, test_x, settings.PADDING_LENGTH)
 
 # TODO: select network to train via script params
-# classifier = cnn(word_index, embedding_matrix, len(settings.RZ_TOPICS), median_article_length)
+# classifier = cnn(word_index, embedding_matrix, len(settings.RZ_TOPICS), settings.PADDING_LENGTH)
 # print(classifier.summary())
 # model_name="rz_cnn.h5"
 # batch_size=128
-# epochs=50
+# epochs=120
 # log_dir = os.path.join(settings.DATA_DIR, "logs",
-#                        f"{model_name.split('.')[0]}-{settings.RZ_MODEL_NAME.split('.')[0]}-{batch_size}-{epochs}"
-#                        f"-{datetime.now().strftime('%Y%m%dT%H%M')}")
+#                        f"{model_name.split('.')[0]}-{settings.RZ}-{settings.EMBEDDINGS_VECTOR_LENGTH}-{batch_size}-{epochs}"
+#                        f"-{datetime.now().strftime('%m%dT%H%M')}")
 # os.makedirs(log_dir, exist_ok=True)
 # train_model(classifier, train_seq_x, train_y, validation_seq_x, validation_y, batch_size=batch_size, epochs=epochs,
 #             model_path=settings.MODELS_PATH, model_name=model_name, logs_path=log_dir)
 #
 classifier = simple(word_index, embedding_matrix, len(settings.RZ_TOPICS), settings.PADDING_LENGTH)
 print(classifier.summary())
-model_name = "rz_simple_ready.h5"
+model_name = "rz_simple_400.h5"
 batch_size = 128
-epochs = 100
+epochs = 20
 log_dir = os.path.join(settings.DATA_DIR, "logs",
                        f"{model_name.split('.')[0]}-{settings.RZ}-{settings.EMBEDDINGS_VECTOR_LENGTH}-{batch_size}-{epochs}"
                        f"-{datetime.now().strftime('%m%dT%H%M')}")
@@ -59,14 +59,14 @@ score = train_model(
     classifier, train_seq_x, train_y, validation_seq_x, validation_y, batch_size=batch_size, epochs=epochs,
     model_path=settings.MODELS_PATH, model_name=model_name, logs_path=log_dir)
 
-# classifier = rnn(word_index, embedding_matrix, len(settings.RZ_TOPICS), median_article_length)
+# classifier = rnn(word_index, embedding_matrix, len(settings.RZ_TOPICS), settings.PADDING_LENGTH)
 # print(classifier.summary())
 # model_name="rz_rnn.h5"
 # batch_size=128
-# epochs=50
+# epochs=120
 # log_dir = os.path.join(settings.DATA_DIR, "logs",
-#                        f"{model_name.split('.')[0]}-{settings.RZ_MODEL_NAME.split('.')[0]}-{batch_size}-{epochs}"
-#                        f"-{datetime.now().strftime('%Y%m%dT%H%M')}")
+#                        f"{model_name.split('.')[0]}-{settings.RZ}-{settings.EMBEDDINGS_VECTOR_LENGTH}-{batch_size}-{epochs}"
+#                        f"-{datetime.now().strftime('%m%dT%H%M')}")
 # os.makedirs(log_dir, exist_ok=True)
 # train_model(classifier, train_seq_x, train_y, validation_seq_x, validation_y, batch_size=batch_size, epochs=epochs,
 #             model_path=settings.MODELS_PATH, model_name=model_name, logs_path=log_dir)
