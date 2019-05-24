@@ -3,6 +3,7 @@ from datetime import datetime
 from statistics import median, mean
 
 from keras.utils import to_categorical
+import numpy as np
 
 from scripts import settings
 from scripts.networks import simple, cnn, rnn
@@ -47,30 +48,45 @@ embedding_matrix, word_index, train_seq_x, validation_seq_x, test_seq_x = get_wo
 # train_model(classifier, train_seq_x, train_y, validation_seq_x, validation_y, batch_size=batch_size, epochs=epochs,
 #             model_path=settings.MODELS_PATH, model_name=model_name, logs_path=log_dir)
 
-classifier = simple(word_index, embedding_matrix, len(settings.BBC_TOPICS), settings.PADDING_LENGTH)
-print(classifier.summary())
-model_name = "bbc_simple_400.h5"
-batch_size = 128
-epochs = 20
-log_dir = os.path.join(settings.DATA_DIR, "logs",
-                       f"{model_name.split('.')[0]}-{settings.BBC}-{settings.EMBEDDINGS_VECTOR_LENGTH}-{batch_size}-{epochs}"
-                       f"-{datetime.now().strftime('%m%dT%H%M')}")
-os.makedirs(log_dir, exist_ok=True)
-score = train_model(
-    classifier, train_seq_x, train_y, validation_seq_x, validation_y, batch_size=batch_size, epochs=epochs,
-    model_path=settings.MODELS_PATH, model_name=model_name, logs_path=log_dir)
-
-# classifier = rnn(word_index, embedding_matrix, len(settings.BBC_TOPICS), settings.PADDING_LENGTH)
+# classifier = simple(word_index, embedding_matrix, len(settings.BBC_TOPICS), settings.PADDING_LENGTH)
 # print(classifier.summary())
-# model_name = "bbc_rnn.h5"
+# model_name = "bbc_simple_400.h5"
 # batch_size = 128
-# epochs = 120
+# epochs = 20
 # log_dir = os.path.join(settings.DATA_DIR, "logs",
 #                        f"{model_name.split('.')[0]}-{settings.BBC}-{settings.EMBEDDINGS_VECTOR_LENGTH}-{batch_size}-{epochs}"
 #                        f"-{datetime.now().strftime('%m%dT%H%M')}")
 # os.makedirs(log_dir, exist_ok=True)
-# train_model(classifier, train_seq_x, train_y, validation_seq_x, validation_y, batch_size=batch_size, epochs=epochs,
+# score = train_model(
+#     classifier, train_seq_x, train_y, validation_seq_x, validation_y, batch_size=batch_size, epochs=epochs,
+#     model_path=settings.MODELS_PATH, model_name=model_name, logs_path=log_dir)
+
+# classifier = rnn(word_index, embedding_matrix, len(settings.BBC_TOPICS), settings.PADDING_LENGTH)
+# print(classifier.summary())
+model_name = "bbc_rnn_400.h5"
+batch_size = 128
+epochs = 100
+# log_dir = os.path.join(settings.DATA_DIR, "logs",
+#                        f"{model_name.split('.')[0]}-{settings.BBC}-{settings.EMBEDDINGS_VECTOR_LENGTH}-{batch_size}-{epochs}"
+#                        f"-{datetime.now().strftime('%m%dT%H%M')}")
+# os.makedirs(log_dir, exist_ok=True)
+# score = train_model(classifier, train_seq_x, train_y, validation_seq_x, validation_y, batch_size=batch_size, epochs=epochs,
 #             model_path=settings.MODELS_PATH, model_name=model_name, logs_path=log_dir)
 
-loss, acc, predictions = test_model(os.path.join(settings.MODELS_PATH, model_name), test_seq_x, test_y, batch_size)
-print(f"score: {score}\ntest loss: {loss}\ntest accuracy: {acc}\npredictions: {predictions}")
+# loss, acc, predictions = test_model(os.path.join(settings.MODELS_PATH, model_name), test_seq_x, test_y, batch_size)
+# print(f"score: {score}\ntest loss: {loss}\ntest accuracy: {acc}\npredictions: {predictions}")
+
+loss, acc, predictions, categories = test_model(os.path.join(settings.MODELS_PATH, model_name), test_seq_x, test_y, batch_size)
+print(f"test loss: {loss}\ntest accuracy: {acc}\npredictions: {predictions}")
+
+test_categories = np.argmax(test_y, axis=1)
+
+result = [(i, j) for i, j in zip(test_categories.tolist(), categories.tolist()) if i != j]
+results = {}
+for item in result:
+    if results.get(item):
+        results[item] += 1
+    else:
+        results[item] = 1
+
+print(results)

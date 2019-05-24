@@ -64,7 +64,7 @@ def train_model(classifier, training_data, training_labels, validation_data, val
     # callbacks = KerasCallback()
     checkpoint = ModelCheckpoint(os.path.join(model_path, model_name), monitor='loss', verbose=1,
                                  save_best_only=True, mode='min')
-    if os.environ.get("CUDA_VERSION"):
+    if os.environ.get("CUDA_PATH_V9_0"):
         tensorboard = TensorBoard(log_dir=logs_path, embeddings_freq=epochs, embeddings_data=validation_data)
     else:
         tensorboard = TensorBoard(log_dir=logs_path, embeddings_freq=epochs)
@@ -76,7 +76,7 @@ def train_model(classifier, training_data, training_labels, validation_data, val
     predictions = classifier.predict(validation_data)
     predictions = [argmax(item) for item in predictions]
     validation_labels = [argmax(item) for item in validation_labels]
-    return classifier, metrics.accuracy_score(validation_labels, predictions)
+    return classifier, metrics.accuracy_score(validation_labels, predictions), predictions
 
 
 def test_model(model_path, test_data, test_labels, batch_size):
@@ -85,7 +85,7 @@ def test_model(model_path, test_data, test_labels, batch_size):
     predictions = classifier.predict(test_data, batch_size=batch_size)
     categories = np.argmax(predictions, axis=1)
     unique, counts = np.unique(categories, return_counts=True)
-    return loss, acc, dict(zip(unique, counts))
+    return loss, acc, dict(zip(unique, counts)), categories
 
 
 def get_word_embeddings(model, train_x, validation_x, test_x, padding_length):
