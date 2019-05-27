@@ -1,6 +1,6 @@
 from keras import layers, models, optimizers
 
-from scripts import settings
+import settings
 
 
 def cnn(word_index, embedding_matrix, number_of_classes, vector_length):
@@ -15,7 +15,7 @@ def cnn(word_index, embedding_matrix, number_of_classes, vector_length):
     pooling_layer = layers.GlobalMaxPooling1D()(convolution_layer)
     output_layer1 = layers.Dense(50, activation="relu")(pooling_layer)
     output_layer1 = layers.Dropout(0.1)(output_layer1)
-    output_layer2 = layers.Dense(number_of_classes, activation="sigmoid")(output_layer1)
+    output_layer2 = layers.Dense(number_of_classes, activation="softmax")(output_layer1)
     model = models.Model(inputs=input_layer, outputs=output_layer2)
     model.compile(optimizer=optimizers.Adam(), loss='binary_crossentropy', metrics=['accuracy'])
     return model
@@ -39,14 +39,14 @@ def rnn(word_index, embedding_matrix, number_of_classes, vector_length):
 
 
 def simple(word_index, embedding_matrix, number_of_classes, vector_length):
-    model = models.Sequential()
-    model.add(layers.Embedding(
+    input_layer = layers.Embedding(
         len(word_index) + 1,
         settings.EMBEDDINGS_VECTOR_LENGTH,
         weights=[embedding_matrix],
         input_length=vector_length,
-        trainable=False))
-    model.add(layers.Flatten())
-    model.add(layers.Dense(number_of_classes, activation="softmax"))
+        trainable=False)
+    hidden_layer = layers.Flatten()(input_layer)
+    output_layer = layers.Dense(number_of_classes, activation="softmax")(hidden_layer)
+    model = models.Model(inputs=input_layer, outputs=output_layer)
     model.compile(optimizer=optimizers.Adam(), loss='binary_crossentropy', metrics=['accuracy'])
     return model

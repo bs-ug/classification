@@ -1,6 +1,6 @@
 import json
 import os
-from glob import glob, iglob
+from glob import glob
 
 import numpy as np
 import pandas
@@ -8,12 +8,12 @@ from gensim.models.callbacks import CallbackAny2Vec
 from keras.callbacks import Callback, ModelCheckpoint, TensorBoard
 from keras.models import load_model
 from keras.preprocessing import text, sequence
+from keras.utils import to_categorical
 from numpy import argmax
 from sklearn import metrics, preprocessing
 from sklearn.metrics import roc_auc_score
 
-from scripts import settings
-from scripts.polish_cleaning import clean_text
+import settings
 
 
 class W2VCallback(CallbackAny2Vec):
@@ -54,8 +54,6 @@ def text_generator(paths, clean=False):
                 content = input_file.read()
             except UnicodeDecodeError:
                 continue
-        if clean:
-            content = clean_text(content)
         yield text.text_to_word_sequence(content)
 
 
@@ -64,7 +62,7 @@ def train_model(classifier, training_data, training_labels, validation_data, val
     # callbacks = KerasCallback()
     checkpoint = ModelCheckpoint(os.path.join(model_path, model_name), monitor='loss', verbose=1,
                                  save_best_only=True, mode='min')
-    if os.environ.get("CUDA_PATH_V9_0"):
+    if "CUDA" in os.environ.keys():
         tensorboard = TensorBoard(log_dir=logs_path, embeddings_freq=epochs, embeddings_data=validation_data)
     else:
         tensorboard = TensorBoard(log_dir=logs_path, embeddings_freq=epochs)
@@ -88,7 +86,7 @@ def test_model(model_path, test_data, test_labels, batch_size):
     return loss, acc, dict(zip(unique, counts)), categories
 
 
-def get_word_embeddings(model, train_x, validation_x, test_x, padding_length):
+def get_word_embeddings_for_training(model, train_x, validation_x, padding_length):
     embeddings_index = {}
     with open(model, "r", encoding="utf-8") as file:
         for line in file:
@@ -101,7 +99,6 @@ def get_word_embeddings(model, train_x, validation_x, test_x, padding_length):
 
     train_seq_x = sequence.pad_sequences(token.texts_to_sequences(train_x), maxlen=padding_length)
     validation_seq_x = sequence.pad_sequences(token.texts_to_sequences(validation_x), maxlen=padding_length)
-    test_seq_x = sequence.pad_sequences(token.texts_to_sequences(test_x), maxlen=padding_length)
 
     embedding_matrix = np.zeros((len(word_index) + 1, settings.EMBEDDINGS_VECTOR_LENGTH))
     for word, i in word_index.items():
@@ -109,7 +106,15 @@ def get_word_embeddings(model, train_x, validation_x, test_x, padding_length):
         if embedding_vector is not None:
             embedding_matrix[i] = embedding_vector
 
-    return embedding_matrix, word_index, train_seq_x, validation_seq_x, test_seq_x
+    return embedding_matrix, word_index, train_seq_x, validation_seq_x
+
+
+def get_word_embeddings_for_test(test_x, padding_length):
+
+    token = text.Tokenizer()
+    token.fit_on_texts(test_x)
+    test_seq_x = sequence.pad_sequences(token.texts_to_sequences(test_x), maxlen=padding_length)
+    return test_seq_x
 
 
 def prepare_data(labels_dict, files_path):
@@ -129,3 +134,27 @@ def prepare_dataset(labels_file, files_path):
     dataset = pandas.DataFrame()
     dataset["labels"], dataset["text"] = prepare_data(labels, files_path)
     return dataset["text"], encoder.fit_transform(dataset["labels"])
+
+
+def prepare_training_datasets(data_dir, w2v_model, length):
+    train_x, train_y = prepare_dataset(
+        os.path.join(data_dir, settings.TRAINING_LABELS),
+        os.path.join(data_dir, settings.TRAINING_FILES))
+    validation_x, validation_y = prepare_dataset(
+        os.path.join(data_dir, settings.VALIDATION_LABELS),
+        os.path.join(data_dir, settings.VALIDATION_FILES))
+    train_y = to_categorical(train_y)
+    validation_y = to_categorical(validation_y)
+    embedding_matrix, word_index, train_seq_x, validation_seq_x = get_word_embeddings_for_training(
+        os.path.join(settings.MODELS_PATH, w2v_model), train_x, validation_x, length)
+
+    return embedding_matrix, word_index, train_seq_x, train_y, validation_seq_x, validation_y
+
+
+def prepare_test_dataset(data_dir, length):
+    test_x, test_y = prepare_dataset(
+        os.path.join(data_dir, settings.TEST_LABELS),
+        os.path.join(data_dir, settings.TEST_FILES))
+    test_y = to_categorical(test_y)
+    test_seq_x = get_word_embeddings_for_test(test_x, length)
+    return test_seq_x, test_y
