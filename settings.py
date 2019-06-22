@@ -42,31 +42,6 @@ BBC_VALIDATION_QUANTITY = 40
 BBC_TEST_QUANTITY = 40
 BBC_MIN_ARTICLE_LENGTH = 100
 
-# Polish news
-POLISH = "polish"
-POLISH_TOPICS = {
-    0: ["wiadomosci.onet.pl/swiat/",
-        "fakty.interia.pl/swiat/",
-        "www.tvn24.pl/wiadomosci-ze-swiata",
-        "www.fakt.pl/wydarzenia/swiat/",
-        "www.wprost.pl/swiat/",
-        "www.rmf24.pl/fakty/swiat/"],
-    1: ["wiadomosci.onet.pl/kraj/",
-        "fakty.interia.pl/polska/",
-        "www.tvn24.pl/wiadomosci-z-kraju",
-        "www.fakt.pl/wydarzenia/polska/",
-        "www.wprost.pl/kraj/",
-        "www.rmf24.pl/fakty/polska/"]
-}
-POLISH_DATA_DIR = "../data/polish"
-POLISH_SOURCE_URLS_FILE = "links.txt"
-POLISH_SOURCE_FILES = "../data/polish/source"
-POLISH_FILTERED_FILES = "../data/polish/filtered"
-POLISH_TRAIN_QUANTITY = 10000
-POLISH_VALIDATION_QUANTITY = 1000
-POLISH_TEST_QUANTITY = 1000
-POLISH_MIN_ARTICLE_LENGTH = 200
-
 # Rzeczpospolita news
 RZ = "rz"
 RZ_TOPICS = {

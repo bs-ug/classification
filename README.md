@@ -8,17 +8,20 @@ Neural Network Based News Classification. An English-Polish Comparative Studies.
 ### CNN
 CNN news are taken from [DeepMind Q&A Dataset](https://cs.nyu.edu/~kcho/DMQA/).
 
-40,500 articles in 15 categories, 2500 training, 100 validation and 100 test files each. Categories are: crime, health, politics, showbiz, sport, tech, travel, us, africa, americas, asia, europe, middle east, living, opinion. Categories are build on keywords in urls.
+After processing:
+30,000 articles in 6 categories, 5000 training, 1000 validation and 1000 test files each. Categories are: _world_, _us_, _politics_, _sport_, _opinion_, _showbiz_. Categories are build on keywords in urls.
 
 ### BBC
 BBC news are taken from [BBC Datasets](http://mlg.ucd.ie/datasets/bbc.html).
 
-2225 articles in 5 categories, 300 training, 50 validation and 50 test files each. Categories are: business, entertainment, politics, sport, tech. Source files are originally divided into categories.
+After processing:
+1,500 articles in 5 categories, 300 training, 40 validation and 40 test files each. Categories are: _business_, _entertainment_, _politics_, _sport_, _tech_. Source files are originally divided into categories.
 
 ### Rzeczpospolita
 Rzeczpospolita news are taken from [Korpus "Rzeczpospolitej"](http://www.cs.put.poznan.pl/dweiss/research/rzeczpospolita/).
 
-40,000 articles in 8 categories, 5000 training, 1000 validation and 1000 test files each. Categories are: Ekonomia, Prawo, Świat, Kraj, Sport, Gazeta, Kultura, Nauka i Technika. Categories are build on metadata included in source HTML files.
+After processing:
+30,000 articles in 6 categories, 5000 training, 1000 validation and 1000 test files each. Categories are: _świat_, _kraj_, _prawo_, _sport_, _kultura_, _nauka i technika_. Categories are build on metadata included in source HTML files.
 
 Rzeczpospolita source files are in HTML format so some analysis and cleaning is necessary. Only content text is taken, titles are ignored. Also text with tabular data are ignored.
 
