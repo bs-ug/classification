@@ -17,25 +17,25 @@ def main():
     args = parser.parse_args()
     if args.dataset == "bbc":
         if args.nn_type == "simple":
-            train_bbc_simple(args.model_name, args.w2v, args.batch_size, args.epochs, args.length)
+            train_bbc_simple(args.mode, args.w2v, args.batch_size, args.epochs, args.length)
         elif args.nn_type == "cnn":
-            train_bbc_cnn(args.model_name, args.w2v, args.batch_size, args.epochs, args.length)
+            train_bbc_cnn(args.model, args.w2v, args.batch_size, args.epochs, args.length)
         else:
-            train_bbc_rnn(args.model_name, args.w2v, args.batch_size, args.epochs, args.length)
+            train_bbc_rnn(args.model, args.w2v, args.batch_size, args.epochs, args.length)
     elif args.dataset == "cnn":
         if args.nn_type == "simple":
-            train_cnn_simple(args.model_name, args.w2v, args.batch_size, args.epochs, args.length)
+            train_cnn_simple(args.model, args.w2v, args.batch_size, args.epochs, args.length)
         elif args.nn_type == "cnn":
-            train_cnn_cnn(args.model_name, args.w2v, args.batch_size, args.epochs, args.length)
+            train_cnn_cnn(args.model, args.w2v, args.batch_size, args.epochs, args.length)
         else:
-            train_cnn_rnn(args.model_name, args.w2v, args.batch_size, args.epochs, args.length)
+            train_cnn_rnn(args.model, args.w2v, args.batch_size, args.epochs, args.length)
     else:
         if args.nn_type == "simple":
-            train_rz_simple(args.model_name, args.w2v, args.batch_size, args.epochs, args.length)
+            train_rz_simple(args.model, args.w2v, args.batch_size, args.epochs, args.length)
         elif args.nn_type == "cnn":
-            train_rz_cnn(args.model_name, args.w2v, args.batch_size, args.epochs, args.length)
+            train_rz_cnn(args.model, args.w2v, args.batch_size, args.epochs, args.length)
         else:
-            train_rz_rnn(args.model_name, args.w2v, args.batch_size, args.epochs, args.length)
+            train_rz_rnn(args.model, args.w2v, args.batch_size, args.epochs, args.length)
 
 
 if __name__ == '__main__':
