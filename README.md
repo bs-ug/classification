@@ -39,7 +39,7 @@ Pretrained models are used for comparison with custom ones:
 
 Folders and scripts configuration. 
 
-`prepare.py --dataset <name> --w2v <model_name>`
+`python prepare.py --dataset <name> --w2v <model_name>`
 
 Data preparation for given dataset. Dataset name choices are: _cnn_, _bbc_ and _rz_. 
 
@@ -47,7 +47,7 @@ Additionally when model name is provided Word2Vec model will be trained on datas
 
 From CNN dataset only stories folder is used. Dataset contains also three files with article URLs. All this files should be concatenated into one file before processing.
 
-`train.py --dataset <name> --nn-type <type> --model <model_name> --w2v <model_name> --batch-size <int> --epochs <int> --length <int>`
+`python train.py --dataset <name> --nn_type <type> --model <model_name> --w2v <model_name> --batch_size <int> --epochs <int> --length <int>`
 
 Training. Dataset name as above, neural network types are: _simple_ for standard feedforward network, _cnn_ for  convolution network and _rnn_ for LSTM network.
 
@@ -55,10 +55,10 @@ Model name is a file name to save model file. W2V model name is for word2vec mod
 
 Additional and optional parameters are: _batch-size_, _epochs_ and _length_. The first and the second are self explanatory, _length_ is for setting the length of articles to be used for training. Shorter ones are filled to the length with zero vectors, longer ones are cut to the defined length.
 
-`results.py --dataset <name> --model <model_name> --batch-size <int> --length <int>`
+`python results.py --dataset <name> --model <model_name> --batch_size <int> --length <int>`
 
 Checking results on test dataset. Dataset and model name like in training.
 
-`polish_w2v_cleaning.py`
+`python polish_w2v_cleaning.py`
 
 Script for removing redundant info from polish word2vec model described in Word Embeddings section.

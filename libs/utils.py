@@ -62,7 +62,7 @@ def train_model(classifier, training_data, training_labels, validation_data, val
     # callbacks = KerasCallback()
     checkpoint = ModelCheckpoint(os.path.join(model_path, model_name), monitor='loss', verbose=1,
                                  save_best_only=True, mode='min')
-    if "CUDA" in os.environ.keys():
+    if "CUDA_PATH" in os.environ.keys():
         tensorboard = TensorBoard(log_dir=logs_path, embeddings_freq=epochs, embeddings_data=validation_data)
     else:
         tensorboard = TensorBoard(log_dir=logs_path, embeddings_freq=epochs)
