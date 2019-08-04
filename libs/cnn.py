@@ -1,7 +1,6 @@
 import hashlib
 import json
 import os
-from datetime import datetime
 from glob import glob
 from random import choice
 
@@ -9,8 +8,7 @@ from gensim.models import Word2Vec
 
 import settings
 from .networks import simple, cnn, rnn
-from .utils import text_generator, W2VCallback
-from .utils import train_model, prepare_training_datasets
+from .utils import text_generator, W2VCallback, train_model, prepare_training_datasets, get_log_dir
 
 
 def hash_hex(s):
@@ -80,51 +78,56 @@ def prepare_cnn_topics():
 
 def train_cnn_w2v(filename):
     iterable = text_generator(os.path.join(settings.CNN_DATA_DIR, '*', "*.txt"))
-    model = Word2Vec([item for item in iterable],
-                     size=settings.EMBEDDINGS_VECTOR_LENGTH,
-                     window=5, min_count=1, workers=4,
-                     compute_loss=True,
-                     callbacks=[W2VCallback()])
+    model = Word2Vec(
+        [item for item in iterable],
+        size=settings.EMBEDDINGS_VECTOR_LENGTH,
+        window=5, min_count=1, workers=4,
+        compute_loss=True,
+        callbacks=[W2VCallback()]
+    )
     model.wv.save_word2vec_format(os.path.join(settings.MODELS_PATH, filename), binary=False)
 
 
 def train_cnn_simple(model_name, w2v_model, batch_size=128, epochs=100, length=400):
     embedding_matrix, word_index, train_seq_x, train_y, validation_seq_x, validation_y = prepare_training_datasets(
-        settings.CNN_DATA_DIR, w2v_model, length)
+        settings.CNN_DATA_DIR, w2v_model, length
+    )
     classifier = simple(word_index, embedding_matrix, len(settings.CNN_TOPICS), settings.PADDING_LENGTH)
     print(classifier.summary())
-    log_dir = os.path.join(settings.DATA_DIR, "logs",
-                           f"{model_name.split('.')[0]}-{settings.CNN}-{settings.EMBEDDINGS_VECTOR_LENGTH}-"
-                           f"{batch_size}-{epochs}-{datetime.now().strftime('%m%dT%H%M')}")
+    log_dir = get_log_dir(model_name, batch_size, epochs)
     os.makedirs(log_dir, exist_ok=True)
-    score = train_model(classifier, train_seq_x, train_y, validation_seq_x, validation_y, batch_size=batch_size,
-                        epochs=epochs, model_path=settings.MODELS_PATH, model_name=model_name, logs_path=log_dir)
+    score = train_model(
+        classifier, train_seq_x, train_y, validation_seq_x, validation_y, batch_size=batch_size,
+        epochs=epochs, model_path=settings.MODELS_PATH, model_name=model_name, logs_path=log_dir
+    )
     return score
 
 
 def train_cnn_cnn(model_name, w2v_model, batch_size=128, epochs=100, length=400):
     embedding_matrix, word_index, train_seq_x, train_y, validation_seq_x, validation_y = prepare_training_datasets(
-        settings.CNN_DATA_DIR, w2v_model, length)
+        settings.CNN_DATA_DIR, w2v_model, length
+    )
     classifier = cnn(word_index, embedding_matrix, len(settings.CNN_TOPICS), length)
     print(classifier.summary())
-    log_dir = os.path.join(settings.DATA_DIR, "logs",
-                           f"{model_name.split('.')[0]}-{settings.CNN}-{settings.EMBEDDINGS_VECTOR_LENGTH}-"
-                           f"{batch_size}-{epochs}-{datetime.now().strftime('%m%dT%H%M')}")
+    log_dir = get_log_dir(model_name, batch_size, epochs)
     os.makedirs(log_dir, exist_ok=True)
-    score = train_model(classifier, train_seq_x, train_y, validation_seq_x, validation_y, batch_size=batch_size,
-                        epochs=epochs, model_path=settings.MODELS_PATH, model_name=model_name, logs_path=log_dir)
+    score = train_model(
+        classifier, train_seq_x, train_y, validation_seq_x, validation_y, batch_size=batch_size,
+        epochs=epochs, model_path=settings.MODELS_PATH, model_name=model_name, logs_path=log_dir
+    )
     return score
 
 
 def train_cnn_rnn(model_name, w2v_model, batch_size=128, epochs=100, length=400):
     embedding_matrix, word_index, train_seq_x, train_y, validation_seq_x, validation_y = prepare_training_datasets(
-        settings.CNN_DATA_DIR, w2v_model, length)
+        settings.CNN_DATA_DIR, w2v_model, length
+    )
     classifier = rnn(word_index, embedding_matrix, len(settings.CNN_TOPICS), settings.PADDING_LENGTH)
     print(classifier.summary())
-    log_dir = os.path.join(settings.DATA_DIR, "logs",
-                           f"{model_name.split('.')[0]}-{settings.CNN}-{settings.EMBEDDINGS_VECTOR_LENGTH}-"
-                           f"{batch_size}-{epochs}-{datetime.now().strftime('%m%dT%H%M')}")
+    log_dir = get_log_dir(model_name, batch_size, epochs)
     os.makedirs(log_dir, exist_ok=True)
-    score = train_model(classifier, train_seq_x, train_y, validation_seq_x, validation_y, batch_size=batch_size,
-                        epochs=epochs, model_path=settings.MODELS_PATH, model_name=model_name, logs_path=log_dir)
+    score = train_model(
+        classifier, train_seq_x, train_y, validation_seq_x, validation_y, batch_size=batch_size,
+        epochs=epochs, model_path=settings.MODELS_PATH, model_name=model_name, logs_path=log_dir
+    )
     return score
