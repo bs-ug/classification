@@ -1,13 +1,11 @@
 from keras import layers, models, optimizers
 
-import settings
 
-
-def cnn(word_index, embedding_matrix, number_of_classes, vector_length):
-    input_layer = layers.Input((vector_length,))
+def conv(word_index, embedding_matrix, number_of_classes, text_length, vector_length):
+    input_layer = layers.Input((text_length,))
     embedding_layer = layers.Embedding(
         len(word_index) + 1,
-        settings.EMBEDDINGS_VECTOR_LENGTH,
+        vector_length,
         weights=[embedding_matrix],
         trainable=False)(input_layer)
     embedding_layer = layers.SpatialDropout1D(0.1)(embedding_layer)
@@ -21,11 +19,11 @@ def cnn(word_index, embedding_matrix, number_of_classes, vector_length):
     return model
 
 
-def rnn(word_index, embedding_matrix, number_of_classes, vector_length):
-    input_layer = layers.Input((vector_length,))
+def lstm(word_index, embedding_matrix, number_of_classes, text_length, vector_length):
+    input_layer = layers.Input((text_length,))
     embedding_layer = layers.Embedding(
         len(word_index) + 1,
-        settings.EMBEDDINGS_VECTOR_LENGTH,
+        vector_length,
         weights=[embedding_matrix],
         trainable=False)(input_layer)
     embedding_layer = layers.SpatialDropout1D(0.1)(embedding_layer)
@@ -38,14 +36,15 @@ def rnn(word_index, embedding_matrix, number_of_classes, vector_length):
     return model
 
 
-def simple(word_index, embedding_matrix, number_of_classes, vector_length):
-    input_layer = layers.Embedding(
+def simple(word_index, embedding_matrix, number_of_classes, text_length, vector_length):
+    input_layer = layers.Input((text_length,))
+    embedding_layer = layers.Embedding(
         len(word_index) + 1,
-        settings.EMBEDDINGS_VECTOR_LENGTH,
+        vector_length,
         weights=[embedding_matrix],
-        input_length=vector_length,
-        trainable=False)
-    hidden_layer = layers.Flatten()(input_layer)
+        input_length=text_length,
+        trainable=False)(input_layer)
+    hidden_layer = layers.Flatten()(embedding_layer)
     output_layer = layers.Dense(number_of_classes, activation="softmax")(hidden_layer)
     model = models.Model(inputs=input_layer, outputs=output_layer)
     model.compile(optimizer=optimizers.Adam(), loss='binary_crossentropy', metrics=['accuracy'])

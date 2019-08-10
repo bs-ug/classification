@@ -39,17 +39,19 @@ Pretrained models are used for comparison with custom ones:
 
 Folders and scripts configuration. 
 
-`python prepare.py --dataset <name> --w2v <model_name>`
+`python prepare.py --dataset <name>`
 
 Data preparation for given dataset. Dataset name choices are: _cnn_, _bbc_ and _rz_. 
 
-Additionally when model name is provided Word2Vec model will be trained on dataset.
-
 From CNN dataset only stories folder is used. Dataset contains also three files with article URLs. All this files should be concatenated into one file before processing.
+
+`python train_w2v.py --dataset <name> --w2v <model_name> --length <vector length>`
+
+Training Word2Vec model with given vector length (default is 100).
 
 `python train.py --dataset <name> --nn_type <type> --model <model_name> --w2v <model_name> --batch_size <int> --epochs <int> --length <int>`
 
-Training. Dataset name as above, neural network types are: _simple_ for standard feedforward network, _cnn_ for  convolution network and _rnn_ for LSTM network.
+Training. Dataset name as above, neural network types are: _simple_ for standard feedforward network, _conv_ for  convolution network and _lstm_ for LSTM network.
 
 Model name is a file name to save model file. W2V model name is for word2vec model to be used for training.
 

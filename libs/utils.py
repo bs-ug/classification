@@ -77,7 +77,7 @@ def test_model(model_path, test_data, test_labels, batch_size):
     return loss, acc, dict(zip(unique, counts)), categories
 
 
-def get_word_embeddings_for_training(model, train_x, validation_x, padding_length):
+def get_word_embeddings_for_training(model, train_x, validation_x, vector_length, padding_length):
     token = text.Tokenizer()
     token.fit_on_texts(train_x)
     train_seq_x = sequence.pad_sequences(token.texts_to_sequences(train_x), maxlen=padding_length)
@@ -87,8 +87,8 @@ def get_word_embeddings_for_training(model, train_x, validation_x, padding_lengt
     with open(model, "r", encoding="utf-8") as file:
         for line in file:
             values = line.split()
-            embeddings_index[values[0]] = np.asarray(values[-settings.EMBEDDINGS_VECTOR_LENGTH:], dtype='float32')
-    embedding_matrix = np.zeros((len(word_index) + 1, settings.EMBEDDINGS_VECTOR_LENGTH))
+            embeddings_index[values[0]] = np.asarray(values[-vector_length:], dtype='float32')
+    embedding_matrix = np.zeros((len(word_index) + 1, vector_length))
     for word, i in word_index.items():
         embedding_vector = embeddings_index.get(word)
         if embedding_vector is not None:
@@ -122,7 +122,7 @@ def prepare_dataset(labels_file, files_path):
     return dataset["text"], encoder.fit_transform(dataset["labels"])
 
 
-def prepare_training_datasets(data_dir, w2v_model, length):
+def prepare_training_datasets(data_dir, w2v_model, vector_length, length):
     train_x, train_y = prepare_dataset(
         os.path.join(data_dir, settings.TRAINING_LABELS),
         os.path.join(data_dir, settings.TRAINING_FILES)
@@ -134,7 +134,7 @@ def prepare_training_datasets(data_dir, w2v_model, length):
     train_y = to_categorical(train_y)
     validation_y = to_categorical(validation_y)
     embedding_matrix, word_index, train_seq_x, validation_seq_x = get_word_embeddings_for_training(
-        os.path.join(settings.MODELS_PATH, w2v_model), train_x, validation_x, length
+        os.path.join(settings.MODELS_PATH, w2v_model), train_x, validation_x, vector_length, length
     )
     return embedding_matrix, word_index, train_seq_x, train_y, validation_seq_x, validation_y
 
@@ -153,13 +153,12 @@ def prepare_test_dataset(data_dir, length):
     return test_seq_x, test_y
 
 
-def get_log_dir(model_name, batch_size, epochs):
+def get_log_dir(model_name, w2v_model_name, batch_size, epochs):
     log_dir = os.path.join(
         settings.DATA_DIR,
         "logs",
         f"{model_name.split('.')[0]}-"
-        f"{settings.BBC}-"
-        f"{settings.EMBEDDINGS_VECTOR_LENGTH}-"
+        f"{w2v_model_name.split('.')[0]}-"
         f"{batch_size}-"
         f"{epochs}-"
         f"{datetime.now().strftime('%m%dT%H%M')}"

@@ -5,7 +5,7 @@ from glob import glob
 from gensim.models import Word2Vec
 
 import settings
-from .networks import simple, cnn, rnn
+from .networks import simple, conv, lstm
 from .utils import text_generator, W2VCallback, train_model, prepare_training_datasets, get_log_dir
 
 
@@ -59,11 +59,11 @@ def prepare_bbc_topics():
     print(global_counter)
 
 
-def train_bbc_w2v(filename):
+def train_bbc_w2v(filename, vector_length):
     iterable = text_generator(os.path.join(settings.BBC_DATA_DIR, '*', "*.txt"))
     model = Word2Vec(
         [item for item in iterable],
-        size=settings.EMBEDDINGS_VECTOR_LENGTH,
+        size=vector_length,
         window=5, min_count=1, workers=4,
         compute_loss=True,
         callbacks=[W2VCallback()]
@@ -71,13 +71,13 @@ def train_bbc_w2v(filename):
     model.wv.save_word2vec_format(os.path.join(settings.MODELS_PATH, filename), binary=False)
 
 
-def train_bbc_simple(model_name, w2v_model, batch_size=128, epochs=100, length=400):
+def train_bbc_simple(model_name, w2v_model, vector_length, batch_size=128, epochs=100, text_length=400):
     embedding_matrix, word_index, train_seq_x, train_y, validation_seq_x, validation_y = prepare_training_datasets(
-        settings.BBC_DATA_DIR, w2v_model, length
+        settings.BBC_DATA_DIR, w2v_model, vector_length, text_length
     )
-    classifier = simple(word_index, embedding_matrix, len(settings.BBC_TOPICS), settings.PADDING_LENGTH)
+    classifier = simple(word_index, embedding_matrix, len(settings.BBC_TOPICS), text_length, vector_length)
     print(classifier.summary())
-    log_dir = get_log_dir(model_name, batch_size, epochs)
+    log_dir = get_log_dir(model_name, w2v_model, batch_size, epochs)
     os.makedirs(log_dir, exist_ok=True)
     score = train_model(
         classifier, train_seq_x, train_y, validation_seq_x, validation_y, batch_size=batch_size,
@@ -86,13 +86,13 @@ def train_bbc_simple(model_name, w2v_model, batch_size=128, epochs=100, length=4
     return score
 
 
-def train_bbc_cnn(model_name, w2v_model, batch_size=128, epochs=100, length=400):
+def train_bbc_conv(model_name, w2v_model, vector_length, batch_size=128, epochs=100, text_length=400):
     embedding_matrix, word_index, train_seq_x, train_y, validation_seq_x, validation_y = prepare_training_datasets(
-        settings.BBC_DATA_DIR, w2v_model, length
+        settings.BBC_DATA_DIR, w2v_model, vector_length, text_length
     )
-    classifier = cnn(word_index, embedding_matrix, len(settings.BBC_TOPICS), length)
+    classifier = conv(word_index, embedding_matrix, len(settings.BBC_TOPICS), text_length, vector_length)
     print(classifier.summary())
-    log_dir = get_log_dir(model_name, batch_size, epochs)
+    log_dir = get_log_dir(model_name, w2v_model, batch_size, epochs)
     os.makedirs(log_dir, exist_ok=True)
     score = train_model(
         classifier, train_seq_x, train_y, validation_seq_x, validation_y, batch_size=batch_size,
@@ -101,13 +101,13 @@ def train_bbc_cnn(model_name, w2v_model, batch_size=128, epochs=100, length=400)
     return score
 
 
-def train_bbc_rnn(model_name, w2v_model, batch_size=128, epochs=100, length=400):
+def train_bbc_lstm(model_name, w2v_model, vector_length, batch_size=128, epochs=100, text_length=400):
     embedding_matrix, word_index, train_seq_x, train_y, validation_seq_x, validation_y = prepare_training_datasets(
-        settings.BBC_DATA_DIR, w2v_model, length
+        settings.BBC_DATA_DIR, w2v_model, vector_length, text_length
     )
-    classifier = rnn(word_index, embedding_matrix, len(settings.BBC_TOPICS), settings.PADDING_LENGTH)
+    classifier = lstm(word_index, embedding_matrix, len(settings.BBC_TOPICS), text_length, vector_length)
     print(classifier.summary())
-    log_dir = get_log_dir(model_name, batch_size, epochs)
+    log_dir = get_log_dir(model_name, w2v_model, batch_size, epochs)
     os.makedirs(log_dir, exist_ok=True)
     score = train_model(
         classifier, train_seq_x, train_y, validation_seq_x, validation_y, batch_size=batch_size,

@@ -8,7 +8,7 @@ from libs.utils import test_model, prepare_test_dataset
 
 
 def main():
-    parser = argparse.ArgumentParser("data preparation")
+    parser = argparse.ArgumentParser("test results")
     parser.add_argument("--dataset", type=str, choices=["bbc", "cnn", "rz"], required=True, help="Dataset name")
     parser.add_argument("--model", type=str, required=True, help="Neural Net model file name")
     parser.add_argument("--batch_size", type=int, default=128, help="Batch size")
