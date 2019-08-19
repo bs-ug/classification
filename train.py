@@ -1,7 +1,7 @@
 import argparse
 import os
 import settings
-from libs.utils import factory
+from libs.utils import classifier_factory
 from libs.bbc import train_bbc
 from libs.cnn import train_cnn
 from libs.rz import train_rz
@@ -27,11 +27,11 @@ def main():
             vector_length = len(first_line) - 1
     print(f"Word embeddings vector length: {vector_length}")
     if args.dataset == "bbc":
-        train_bbc(factory[args.nn_type], args.monitor, args.model, args.w2v, vector_length, args.batch_size, args.epochs, args.length)
+        train_bbc(classifier_factory[args.nn_type], args.monitor, args.model, args.w2v, vector_length, args.batch_size, args.epochs, args.length)
     elif args.dataset == "cnn":
-        train_cnn(factory[args.nn_type], args.monitor, args.model, args.w2v, vector_length, args.batch_size, args.epochs, args.length)
+        train_cnn(classifier_factory[args.nn_type], args.monitor, args.model, args.w2v, vector_length, args.batch_size, args.epochs, args.length)
     else:
-        train_rz(factory[args.nn_type], args.monitor, args.model, args.w2v, vector_length, args.batch_size, args.epochs, args.length)
+        train_rz(classifier_factory[args.nn_type], args.monitor, args.model, args.w2v, vector_length, args.batch_size, args.epochs, args.length)
 
 
 if __name__ == '__main__':

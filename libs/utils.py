@@ -16,7 +16,7 @@ from sklearn import metrics, preprocessing
 import settings
 from .networks import simple, conv, lstm
 
-factory = {
+classifier_factory = {
     "simple": simple,
     "conv": conv,
     "lstm": lstm
