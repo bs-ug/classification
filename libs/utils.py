@@ -14,6 +14,13 @@ from numpy import argmax
 from sklearn import metrics, preprocessing
 
 import settings
+from .networks import simple, conv, lstm
+
+factory = {
+    "simple": simple,
+    "conv": conv,
+    "lstm": lstm
+}
 
 
 class W2VCallback(CallbackAny2Vec):
@@ -24,7 +31,7 @@ class W2VCallback(CallbackAny2Vec):
     def on_epoch_end(self, model):
         loss = model.get_latest_training_loss() - self.loss
         self.loss += loss
-        print('Loss after epoch {}: {}'.format(self.epoch, loss))
+        print(f"Loss after epoch {self.epoch}: {loss}")
         self.epoch += 1
 
     def on_epoch_begin(self, model):
@@ -44,17 +51,19 @@ def text_generator(paths):
         yield text.text_to_word_sequence(content)
 
 
-def train_model(classifier, training_data, training_labels, validation_data, validation_labels, batch_size, epochs,
-                model_path, model_name, logs_path):
+def train_model(
+        classifier, monitor, training_data, training_labels, validation_data, validation_labels, batch_size, epochs,
+        model_path, model_name, logs_path
+):
     checkpoint = ModelCheckpoint(
         os.path.join(model_path, model_name),
-        monitor='loss',
+        monitor=monitor,
         verbose=1,
         save_best_only=True,
-        mode='min'
+        mode="min"
     )
     if "CUDA_PATH" in os.environ.keys():
-        tensorboard = TensorBoard(log_dir=logs_path, embeddings_freq=epochs, embeddings_data=validation_data)
+        tensorboard = TensorBoard(log_dir=logs_path, embeddings_freq=epochs, embeddings_data=validation_data[:10])
     else:
         tensorboard = TensorBoard(log_dir=logs_path, embeddings_freq=epochs)
     classifier.fit(
